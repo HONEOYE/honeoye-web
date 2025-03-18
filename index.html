@@ -8,15 +8,13 @@
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Экран загрузки -->
     <div id="loading-screen">
         <div class="loading-text">Connecting to the Wired...</div>
     </div>
 
-    <!-- Слой для цифрового дождя -->
+    <!-- Слой для цифрового дождя (Matrix Rain) -->
     <canvas id="matrix-rain"></canvas>
 
-    <!-- Слой для сканирующей линии -->
     <div id="scanline"></div>
 
     <div class="video-background" id="video-background">
@@ -27,12 +25,11 @@
         <div class="fallback-bg"></div>
     </div>
 
-    <!-- Музыкальный плеер -->
     <div id="music-player">
         <div id="track-info">Track: <span id="current-track">Loading...</span></div>
         <div class="player-controls">
             <button id="prev-track">◄</button>
-            <button id="play-pause">▶</button>
+            <button id="play-pause">▶ (Tap to start)</button>
             <button id="next-track">►</button>
         </div>
     </div>
@@ -49,10 +46,7 @@
         </div>
     </div>
 
-    <!-- Слой для шума -->
     <canvas id="noise"></canvas>
-
-    <!-- Терминал -->
     <div id="terminal">
         <div id="terminal-output"></div>
         <div class="terminal-input-wrapper">
@@ -61,10 +55,9 @@
         </div>
     </div>
 
-    <!-- Футер с счётчиком и цитатами -->
     <div class="footer">
-        <div id="visit-counter">re-entries: <span id="visit-count">0</span></div>
-        <div id="quote"><span id="quote-text"></span></div>
+        <div id="visit-counter">Посещений: <span id="visit-count">0</span></div>
+        <div id="quote">Цитата: <span id="quote-text"></span></div>
     </div>
 
     <div id="secret-message"></div>

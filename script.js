@@ -22,7 +22,6 @@ const overloadMessage = document.getElementById('overload-message');
 const terminalOutput = document.getElementById('terminal-output');
 const terminalInput = document.getElementById('terminal-input');
 const loadingScreen = document.getElementById('loading-screen');
-const loadingLog = document.getElementById('loading-log');
 const playPauseBtn = document.getElementById('play-pause');
 const prevTrackBtn = document.getElementById('prev-track');
 const nextTrackBtn = document.getElementById('next-track');
@@ -34,82 +33,29 @@ const terminal = document.getElementById('terminal');
 const steamBtn = document.querySelector('.steam-btn');
 let rect = nickname.getBoundingClientRect();
 
-// Проверка, что элементы найдены
-console.log('loadingScreen element:', loadingScreen);
-console.log('loadingLog element:', loadingLog);
-
-// Инициализация лога
-let logText = 'load video: pending\nload scripts: pending';
-if (loadingLog) {
-    loadingLog.textContent = logText;
-}
-
-// Состояние загрузки
-let isVideoLoaded = false;
-let isScriptsLoaded = false;
-
-// Обновление лога
-function updateLoadingLog(message) {
-    if (loadingLog) {
-        logText += `\n${message}`;
-        loadingLog.textContent = logText;
-    }
-}
-
-// Проверка загрузки видео
-video.addEventListener('loadeddata', () => {
-    isVideoLoaded = true;
-    updateLoadingLog('load video: success');
-    checkAllLoaded();
-});
-
-video.addEventListener('error', () => {
-    isVideoLoaded = true; // Считаем ошибку как завершение
-    updateLoadingLog('load video: failed');
-    checkAllLoaded();
-});
-
-// Проверка загрузки скриптов (на основе загрузки окна)
-window.addEventListener('load', () => {
-    isScriptsLoaded = true;
-    updateLoadingLog('load scripts: success');
-    checkAllLoaded();
-});
-
-// Проверка всех ресурсов
-function checkAllLoaded() {
-    if (isVideoLoaded && isScriptsLoaded) {
-        hideLoadingScreen();
-    }
-}
-
-// Экран загрузки с гарантированным тайм-аутом
+// Экран загрузки с эффектом "переключения каналов"
 function hideLoadingScreen() {
-    console.log('Hiding loading screen...');
-    if (loadingScreen) {
-        loadingScreen.classList.add('hidden');
-        console.log('Loading screen hidden.');
-    } else {
-        console.error('loadingScreen element not found.');
-    }
+    loadingScreen.classList.add('hidden');
 }
 
-// Тайм-аут на 3 секунды для проверки загрузки
-setTimeout(() => {
-    console.log('3-second check reached.');
-    updateLoadingLog('3s check: evaluating...');
-    if (!isVideoLoaded || !isScriptsLoaded) {
-        console.log('Not all resources loaded, waiting 5 more seconds.');
-        updateLoadingLog('waiting 5s timeout...');
-        setTimeout(() => {
-            console.log('5-second timeout reached. Hiding loading screen.');
-            hideLoadingScreen();
-        }, 5000); // Дополнительные 5 секунд
-    } else {
-        console.log('All resources loaded, hiding immediately.');
-        hideLoadingScreen();
+let isVideoLoaded = false;
+
+video.addEventListener('loadeddata', () => {
+    console.log('Видео успешно загружено.');
+    isVideoLoaded = true;
+    if (document.readyState === 'complete') {
+        setTimeout(hideLoadingScreen, 2000);
     }
-}, 3000); // 3 секунды
+});
+
+window.addEventListener('load', () => {
+    console.log('Страница полностью загружена.');
+    if (isVideoLoaded) {
+        setTimeout(hideLoadingScreen, 2000);
+    } else {
+        setTimeout(hideLoadingScreen, 5000);
+    }
+});
 
 // Цифровой дождь (Matrix Rain)
 const matrixChars = "❤1337HONEOYE!@#</3";
@@ -224,7 +170,7 @@ nickname.addEventListener('mousemove', (e) => {
     particle.style.top = `${e.clientY}px`;
     particle.style.color = '#0ff';
     particle.style.fontSize = '14px';
-    particle.style.pointer-events = 'none';
+    particle.style.pointerEvents = 'none';
     particle.style.animation = 'particle-rise 1s forwards';
     document.body.appendChild(particle);
     setTimeout(() => particle.remove(), 1000);
@@ -298,11 +244,13 @@ setInterval(showNotification, Math.random() * 10000 + 10000);
 
 // Случайные системные сбои
 function systemGlitch() {
-    if (Math.random() < 0.05) {
+    if (Math.random() < 0.05) { // 5% вероятность
+        // Приостанавливаем анимации
         document.body.style.animationPlayState = 'paused';
         canvasNoise.classList.add('glitch');
         nickname.classList.add('rgb-glitch');
 
+        // Эффект "зависания" длится 1 секунду
         setTimeout(() => {
             document.body.style.animationPlayState = 'running';
             canvasNoise.classList.remove('glitch');
@@ -310,10 +258,11 @@ function systemGlitch() {
             addToTerminal("System stabilized.");
         }, 1000);
     }
+    // Проверяем каждые 30-60 секунд
     setTimeout(systemGlitch, Math.random() * 30000 + 30000);
 }
 
-setTimeout(systemGlitch, 30000);
+setTimeout(systemGlitch, 30000); // Первая проверка через 30 секунд
 
 // Интерактивные провода
 let mouseX = 0;
@@ -324,6 +273,7 @@ const targets = [
     { element: steamBtn, x: 0, y: 0 }
 ];
 
+// Обновляем координаты целей
 function updateTargetPositions() {
     targets.forEach(target => {
         const rect = target.element.getBoundingClientRect();
@@ -334,6 +284,7 @@ function updateTargetPositions() {
 
 updateTargetPositions();
 
+// Хранилище линий и частиц
 const wires = [];
 const particles = [];
 
@@ -341,6 +292,7 @@ document.addEventListener('mousemove', (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
 
+    // Создаём линии к целям
     targets.forEach(target => {
         wires.push({
             startX: mouseX,
@@ -348,9 +300,10 @@ document.addEventListener('mousemove', (e) => {
             endX: target.x,
             endY: target.y,
             opacity: 1,
-            lifetime: 2000
+            lifetime: 2000 // 2 секунды
         });
 
+        // Создаём частицы, движущиеся по линии
         for (let i = 0; i < 3; i++) {
             particles.push({
                 x: mouseX,
@@ -367,8 +320,9 @@ document.addEventListener('mousemove', (e) => {
 function drawWires() {
     ctxWires.clearRect(0, 0, canvasWires.width, canvasWires.height);
 
+    // Рисуем линии
     wires.forEach((wire, index) => {
-        wire.opacity -= 1 / (wire.lifetime / 1000 * 60);
+        wire.opacity -= 1 / (wire.lifetime / 1000 * 60); // Уменьшаем прозрачность
         if (wire.opacity <= 0) {
             wires.splice(index, 1);
             return;
@@ -382,6 +336,7 @@ function drawWires() {
         ctxWires.stroke();
     });
 
+    // Рисуем и обновляем частицы
     particles.forEach((particle, index) => {
         particle.progress += particle.speed;
         if (particle.progress >= 1) {
@@ -470,7 +425,7 @@ terminalInput.addEventListener('keypress', (e) => {
 
 // Музыкальный плеер
 const tracks = [
-    { url: "/track2.mp3", name: "Sewerslvt - she.mp3" },
+    { url: "/track2.mp3", name: "Cyber Track" },
 ];
 
 let currentTrackIndex = 0;
@@ -516,6 +471,13 @@ nextTrackBtn.addEventListener('click', nextTrack);
 
 window.addEventListener('load', () => {
     loadTrack(Math.floor(Math.random() * tracks.length));
+});
+
+video.addEventListener('error', () => {
+    console.error('Не удалось загрузить видео. Используется резервный фон.');
+    const fallback = document.querySelector('.fallback-bg');
+    fallback.style.opacity = 1;
+    hideLoadingScreen();
 });
 
 window.addEventListener('resize', () => {

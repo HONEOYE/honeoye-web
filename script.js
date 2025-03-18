@@ -22,6 +22,7 @@ const overloadMessage = document.getElementById('overload-message');
 const terminalOutput = document.getElementById('terminal-output');
 const terminalInput = document.getElementById('terminal-input');
 const loadingScreen = document.getElementById('loading-screen');
+const loadingLog = document.getElementById('loading-log');
 const playPauseBtn = document.getElementById('play-pause');
 const prevTrackBtn = document.getElementById('prev-track');
 const nextTrackBtn = document.getElementById('next-track');
@@ -39,17 +40,46 @@ function hideLoadingScreen() {
 }
 
 let isVideoLoaded = false;
+let isMusicLoaded = false;
 
+// Обновление лога загрузки
+function updateLoadingLog(message) {
+    if (loadingLog) {
+        loadingLog.textContent = message;
+    }
+}
+
+// Инициализация лога
+updateLoadingLog("loading video...\nloading music...");
+
+// Проверка загрузки видео
 video.addEventListener('loadeddata', () => {
     console.log('Видео успешно загружено.');
     isVideoLoaded = true;
-    if (document.readyState === 'complete') {
+    updateLoadingLog(`loading video... ✓\nloading music...`);
+    if (document.readyState === 'complete' && isMusicLoaded) {
         setTimeout(hideLoadingScreen, 2000);
     }
 });
 
+video.addEventListener('error', () => {
+    console.error('Не удалось загрузить видео. Используется резервный фон.');
+    isVideoLoaded = true;
+    updateLoadingLog(`loading video... ✗\nloading music...`);
+    const fallback = document.querySelector('.fallback-bg');
+    fallback.style.opacity = 1;
+    if (document.readyState === 'complete' && isMusicLoaded) {
+        setTimeout(hideLoadingScreen, 2000);
+    } else {
+        setTimeout(hideLoadingScreen, 5000);
+    }
+});
+
+// Проверка загрузки страницы и музыки
 window.addEventListener('load', () => {
     console.log('Страница полностью загружена.');
+    isMusicLoaded = true; // Предполагаем, что музыка загружается с загрузкой страницы
+    updateLoadingLog(`loading video... ${isVideoLoaded ? '✓' : '✗'}\nloading music... ✓`);
     if (isVideoLoaded) {
         setTimeout(hideLoadingScreen, 2000);
     } else {
@@ -471,13 +501,6 @@ nextTrackBtn.addEventListener('click', nextTrack);
 
 window.addEventListener('load', () => {
     loadTrack(Math.floor(Math.random() * tracks.length));
-});
-
-video.addEventListener('error', () => {
-    console.error('Не удалось загрузить видео. Используется резервный фон.');
-    const fallback = document.querySelector('.fallback-bg');
-    fallback.style.opacity = 1;
-    hideLoadingScreen();
 });
 
 window.addEventListener('resize', () => {

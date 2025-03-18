@@ -45,13 +45,13 @@ window.addEventListener('load', () => {
     if (isVideoLoaded) {
         hideLoadingScreen();
     } else {
-        // Резервный таймер на 5 секунд
-        setTimeout(hideLoadingScreen, 5000);
+        // Резервный таймер на 3 секунды
+        setTimeout(hideLoadingScreen, 3000);
     }
 });
 
 // Цифровой дождь (Matrix Rain)
-const matrixChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const matrixChars = "❤1337HONEOYE!@#";
 const fontSize = 14;
 const columns = canvasMatrix.width / fontSize;
 const drops = Array(Math.floor(columns)).fill(1);

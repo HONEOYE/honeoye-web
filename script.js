@@ -1,20 +1,57 @@
-const nickname = document.querySelector('.nickname');
-nickname.addEventListener('click', () => {
-    const spans = nickname.querySelectorAll('span');
-    spans.forEach(span => {
-        span.style.animation = 'explode 0.5s ease-in-out';
-        setTimeout(() => {
-            span.style.animation = 'flashIn 0.5s forwards';
-        }, 500);
-    });
-});
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-// Добавляем CSS-анимацию через JS
-const style = document.createElement('style');
-style.innerHTML = `
-    @keyframes explode {
-        0% { transform: translate(0, 0) scale(1); opacity: 1; }
-        100% { transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px) scale(0); opacity: 0; }
+const particlesArray = [];
+const nickname = document.getElementById('nickname');
+const rect = nickname.getBoundingClientRect();
+
+class Particle {
+    constructor() {
+        this.x = rect.left + Math.random() * rect.width;
+        this.y = rect.top + Math.random() * rect.height;
+        this.size = Math.random() * 5 + 1;
+        this.speedX = Math.random() * 3 - 1.5;
+        this.speedY = Math.random() * 3 - 1.5;
+        this.life = 100;
     }
-`;
-document.head.appendChild(style);
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.life--;
+    }
+    draw() {
+        ctx.fillStyle = `rgba(0, 255, 255, ${this.life / 100})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+function initParticles() {
+    for (let i = 0; i < 50; i++) {
+        particlesArray.push(new Particle());
+    }
+}
+
+function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = particlesArray.length - 1; i >= 0; i--) {
+        particlesArray[i].update();
+        particlesArray[i].draw();
+        if (particlesArray[i].life <= 0) {
+            particlesArray.splice(i, 1);
+            particlesArray.push(new Particle());
+        }
+    }
+    requestAnimationFrame(animateParticles);
+}
+
+initParticles();
+animateParticles();
+
+window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});

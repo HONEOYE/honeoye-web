@@ -1,8 +1,3 @@
-const canvasSmoke = document.getElementById('smoke');
-const ctxSmoke = canvasSmoke.getContext('2d');
-canvasSmoke.width = window.innerWidth;
-canvasSmoke.height = window.innerHeight;
-
 const canvasNoise = document.getElementById('noise');
 const ctxNoise = canvasNoise.getContext('2d');
 canvasNoise.width = window.innerWidth;
@@ -12,65 +7,10 @@ const nickname = document.getElementById('nickname');
 const video = document.getElementById('background-video');
 let rect = nickname.getBoundingClientRect();
 
-class SmokeParticle {
-    constructor() {
-        this.x = Math.random() * canvasSmoke.width;
-        this.y = canvasSmoke.height + Math.random() * 50;
-        this.size = Math.random() * 15 + 5;
-        this.alpha = Math.random() * 0.3 + 0.1;
-        this.speedY = -Math.random() * 0.8 - 0.3;
-        this.speedX = Math.random() * 0.2 - 0.1;
-        this.glitch = false;
-    }
-    update() {
-        this.y += this.speedY;
-        this.x += this.speedX + (this.glitch ? (Math.random() * 2 - 1) : 0);
-        this.alpha -= 0.001;
-        if (this.alpha <= 0 || this.y < -this.size) {
-            this.x = Math.random() * canvasSmoke.width;
-            this.y = canvasSmoke.height + Math.random() * 50;
-            this.alpha = Math.random() * 0.3 + 0.1;
-            this.glitch = false;
-        }
-        if (Math.random() < 0.02) {
-            this.glitch = true;
-        }
-    }
-    draw() {
-        ctxSmoke.fillStyle = `rgba(200, 200, 200, ${this.alpha})`;
-        ctxSmoke.beginPath();
-        ctxSmoke.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctxSmoke.fill();
-        if (this.glitch) {
-            ctxSmoke.fillStyle = `rgba(0, 255, 255, ${this.alpha * 0.5})`;
-            ctxSmoke.fillRect(this.x - 5, this.y, 10, 2);
-        }
-    }
-}
-
-const smokeArray = [];
-function initSmoke() {
-    for (let i = 0; i < 100; i++) {
-        smokeArray.push(new SmokeParticle());
-    }
-}
-
-function animateSmoke() {
-    console.log("Animating smoke...");
-    ctxSmoke.clearRect(0, 0, canvasSmoke.width, canvasSmoke.height);
-    for (let i = 0; i < smokeArray.length; i++) {
-        smokeArray[i].update();
-        smokeArray[i].draw();
-    }
-    requestAnimationFrame(animateSmoke);
-}
-
-initSmoke();
-animateSmoke();
-
 function drawNoise() {
     console.log("Drawing noise...");
-    ctxNoise.clearRect(0, 0, canvasNoise.width, canvasNoise.height);
+    ctxNoise.fillStyle = `rgba(0, 0, 0, 0.9)`;
+    ctxNoise.fillRect(0, 0, canvasNoise.width, canvasNoise.height);
     for (let i = 0; i < 2000; i++) {
         const x = Math.random() * canvasNoise.width;
         const y = Math.random() * canvasNoise.height;
@@ -121,8 +61,6 @@ video.addEventListener('loadeddata', () => {
 });
 
 window.addEventListener('resize', () => {
-    canvasSmoke.width = window.innerWidth;
-    canvasSmoke.height = window.innerHeight;
     canvasNoise.width = window.innerWidth;
     canvasNoise.height = window.innerHeight;
     rect = nickname.getBoundingClientRect();

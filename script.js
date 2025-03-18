@@ -7,11 +7,14 @@ const nickname = document.getElementById('nickname');
 const video = document.getElementById('background-video');
 let rect = nickname.getBoundingClientRect();
 
+// Оптимизация шума для мобильных
 function drawNoise() {
     console.log("Drawing noise...");
+    // Уменьшаем количество частиц на мобильных устройствах
+    const particleCount = window.innerWidth < 768 ? 500 : 2000;
     ctxNoise.fillStyle = `rgba(0, 0, 0, 0.9)`;
     ctxNoise.fillRect(0, 0, canvasNoise.width, canvasNoise.height);
-    for (let i = 0; i < 2000; i++) {
+    for (let i = 0; i < particleCount; i++) {
         const x = Math.random() * canvasNoise.width;
         const y = Math.random() * canvasNoise.height;
         ctxNoise.fillStyle = `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.05)`;

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HONEOYE</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="video-background" id="video-background">
@@ -12,6 +13,7 @@
             <source src="background.mp4" type="video/mp4">
             Ваш браузер не поддерживает видео.
         </video>
+        <div class="fallback-bg"></div> <!-- Резервный фон -->
     </div>
     <div class="content">
         <h1 class="nickname" id="nickname">
@@ -26,8 +28,8 @@
             </a>
         </div>
     </div>
-    <canvas id="particles"></canvas>
-    <canvas id="noise"></canvas> <!-- Новый canvas для шума -->
+    <canvas id="smoke"></canvas> <!-- Заменяем частицы на дым -->
+    <canvas id="noise"></canvas>
     <script src="script.js"></script>
 </body>
 </html>

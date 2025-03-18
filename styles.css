@@ -54,6 +54,11 @@ body, html {
     color: #fff;
     text-shadow: 0 0 10px #0ff, 0 0 20px #f0f;
     animation: flicker 3s infinite;
+    cursor: pointer; /* Указывает, что можно кликать */
+}
+
+.nickname span {
+    display: inline-block;
 }
 
 @keyframes flicker {
@@ -101,6 +106,46 @@ body, html {
     opacity: 0.2;
 }
 
+/* Стили для футера */
+.footer {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    color: #fff;
+    text-align: center;
+    font-size: 1.2em;
+    text-shadow: 0 0 5px #0ff;
+    animation: flicker 3s infinite;
+}
+
+#visit-counter, #quote {
+    margin: 5px 0;
+}
+
+#secret-message {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #0ff;
+    font-size: 2em;
+    text-shadow: 0 0 10px #0ff, 0 0 20px #f0f;
+    animation: glitch 1s infinite;
+    z-index: 3;
+}
+
+@keyframes glitch {
+    0% { transform: translate(-50%, -50%) translate(0, 0); }
+    20% { transform: translate(-50%, -50%) translate(-5px, 5px); }
+    40% { transform: translate(-50%, -50%) translate(5px, -5px); }
+    60% { transform: translate(-50%, -50%) translate(-3px, 3px); }
+    80% { transform: translate(-50%, -50%) translate(3px, -3px); }
+    100% { transform: translate(-50%, -50%) translate(0, 0); }
+}
+
 /* Адаптация для мобильных устройств */
 @media (max-width: 768px) {
     .nickname {
@@ -115,6 +160,11 @@ body, html {
     .steam-icon {
         width: 20px;
         height: 20px;
+    }
+
+    .footer {
+        font-size: 1em;
+        bottom: 10px;
     }
 }
 
@@ -131,5 +181,10 @@ body, html {
     .steam-icon {
         width: 16px;
         height: 16px;
+    }
+
+    .footer {
+        font-size: 0.8em;
+        bottom: 5px;
     }
 }

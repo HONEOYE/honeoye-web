@@ -12,7 +12,6 @@ const nickname = document.getElementById('nickname');
 const video = document.getElementById('background-video');
 let rect = nickname.getBoundingClientRect();
 
-// Эффект дыма
 class SmokeParticle {
     constructor() {
         this.x = Math.random() * canvasSmoke.width;
@@ -57,6 +56,7 @@ function initSmoke() {
 }
 
 function animateSmoke() {
+    console.log("Animating smoke...");
     ctxSmoke.clearRect(0, 0, canvasSmoke.width, canvasSmoke.height);
     for (let i = 0; i < smokeArray.length; i++) {
         smokeArray[i].update();
@@ -68,8 +68,8 @@ function animateSmoke() {
 initSmoke();
 animateSmoke();
 
-// Динамичный шум
 function drawNoise() {
+    console.log("Drawing noise...");
     ctxNoise.clearRect(0, 0, canvasNoise.width, canvasNoise.height);
     for (let i = 0; i < 2000; i++) {
         const x = Math.random() * canvasNoise.width;
@@ -82,8 +82,8 @@ function drawNoise() {
 
 drawNoise();
 
-// Глитч текста
 function glitchText() {
+    console.log("Glitching text...");
     if (Math.random() < 0.05) {
         const offset = Math.random() * 10 - 5;
         nickname.style.transform = `translate(${offset}px, ${Math.random() * 5 - 2.5}px)`;
@@ -97,8 +97,8 @@ function glitchText() {
 
 glitchText();
 
-// Глитч видео
 function glitchVideo() {
+    console.log("Glitching video...");
     if (Math.random() < 0.1) {
         const offset = Math.random() * 10 - 5;
         video.style.transform = `translate(${offset}px, ${Math.random() * 5 - 2.5}px)`;
@@ -110,7 +110,6 @@ function glitchVideo() {
 
 glitchVideo();
 
-// Проверка загрузки видео
 video.addEventListener('error', () => {
     console.error('Не удалось загрузить видео. Используется резервный фон.');
     const fallback = document.querySelector('.fallback-bg');
@@ -121,7 +120,6 @@ video.addEventListener('loadeddata', () => {
     console.log('Видео успешно загружено.');
 });
 
-// Обновление размеров при изменении окна
 window.addEventListener('resize', () => {
     canvasSmoke.width = window.innerWidth;
     canvasSmoke.height = window.innerHeight;

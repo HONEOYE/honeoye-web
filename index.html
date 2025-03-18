@@ -9,9 +9,8 @@
 </head>
 <body>
     <div class="video-background" id="video-background">
-        <video autoplay muted loop id="background-video">
-            <!-- Попробуем видео с Vimeo -->
-            <source src="https://player.vimeo.com/progressive_redirect/playback/87654321/rendition/1080p/file.mp4?loc=external&signature=abc123" type="video/mp4">
+        <video autoplay muted loop id="background-video" crossorigin="anonymous">
+            <source src="https://honeoye.github.io/honeoye-site/background.mp4" type="video/mp4">
             Ваш браузер не поддерживает видео.
         </video>
         <div class="fallback-bg"></div>
@@ -27,7 +26,6 @@
             </a>
         </div>
     </div>
-    <canvas id="smoke"></canvas>
     <canvas id="noise"></canvas>
     <script src="/script.js"></script>
 </body>

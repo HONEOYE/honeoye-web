@@ -41,32 +41,19 @@ tunnelOverlay.id = 'tunnel-overlay';
 document.body.appendChild(tunnelOverlay);
 let rect = nickname.getBoundingClientRect();
 
-// Экран загрузки с эффектом "переключения каналов"
+// Экран загрузки с гарантированным тайм-аутом
 function hideLoadingScreen() {
     loadingScreen.classList.add('hidden');
 }
 
-let isVideoLoaded = false;
-
-video.addEventListener('loadeddata', () => {
-    console.log('Видео успешно загружено.');
-    isVideoLoaded = true;
-    if (document.readyState === 'complete') {
-        setTimeout(hideLoadingScreen, 2000);
-    }
-});
-
-window.addEventListener('load', () => {
-    console.log('Страница полностью загружена.');
-    if (isVideoLoaded) {
-        setTimeout(hideLoadingScreen, 2000);
-    } else {
-        setTimeout(hideLoadingScreen, 5000);
-    }
-});
+// Тайм-аут на 5 секунд для скрытия экрана загрузки
+setTimeout(() => {
+    console.log('Тайм-аут загрузки (5 секунд). Скрываем экран.');
+    hideLoadingScreen();
+}, 5000); // 5 секунд
 
 // Цифровой дождь (Matrix Rain)
-const matrixChars = "❤1337HONEOYE!@#</3";
+const matrixChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const fontSize = 14;
 const columns = canvasMatrix.width / fontSize;
 const drops = Array(Math.floor(columns)).fill(1);
@@ -380,13 +367,11 @@ function drawTunnel(progress) {
         ctxTunnel.scale(scale, scale);
         ctxTunnel.translate(-centerX, -centerY);
 
-        // Символы в туннеле
         const char = matrixChars.charAt(Math.floor(Math.random() * matrixChars.length));
         ctxTunnel.fillStyle = `rgba(0, 255, 255, ${alpha})`;
         ctxTunnel.font = `${fontSize * scale}px monospace`;
         ctxTunnel.fillText(char, centerX + Math.sin(offset) * 50, centerY + Math.cos(offset) * 50);
 
-        // Линии туннеля
         ctxTunnel.beginPath();
         ctxTunnel.moveTo(0, centerY + z);
         ctxTunnel.lineTo(canvasTunnel.width, centerY + z);
@@ -487,7 +472,7 @@ terminalInput.addEventListener('keypress', (e) => {
 
 // Музыкальный плеер
 const tracks = [
-    { url: "/track2.mp3", name: "Cyber Track" },
+    { url: "/track2.mp3", name: "Sewerslvt - her.mp3" },
 ];
 
 let currentTrackIndex = 0;
@@ -533,13 +518,6 @@ nextTrackBtn.addEventListener('click', nextTrack);
 
 window.addEventListener('load', () => {
     loadTrack(Math.floor(Math.random() * tracks.length));
-});
-
-video.addEventListener('error', () => {
-    console.error('Не удалось загрузить видео. Используется резервный фон.');
-    const fallback = document.querySelector('.fallback-bg');
-    fallback.style.opacity = 1;
-    hideLoadingScreen();
 });
 
 window.addEventListener('resize', () => {

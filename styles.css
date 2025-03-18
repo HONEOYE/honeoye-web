@@ -291,7 +291,7 @@ body, html {
     color: #fff;
     font-size: 2em;
     text-shadow: 0 0 10px #f00, 0 0 20px #f00;
-    animation: glitch 1s infinite;
+    animation: flicker 1s infinite, glitch 1s infinite; /* Добавляем мигание */
     z-index: 3;
     text-align: center;
     border: 2px solid #f00;
@@ -306,25 +306,6 @@ body, html {
     60% { transform: translate(-50%, -50%) translate(-3px, 3px); }
     80% { transform: translate(-50%, -50%) translate(3px, -3px); }
     100% { transform: translate(-50%, -50%) translate(0, 0); }
-}
-
-/* Анимация потряхивания для объектов во время System Overload */
-.overload-shake {
-    animation: shake 0.5s infinite, glitch 1s infinite;
-}
-
-@keyframes shake {
-    0% { transform: translate(0, 0); }
-    10% { transform: translate(-5px, 5px); }
-    20% { transform: translate(5px, -5px); }
-    30% { transform: translate(-3px, 3px); }
-    40% { transform: translate(3px, -3px); }
-    50% { transform: translate(-2px, 2px); }
-    60% { transform: translate(2px, -2px); }
-    70% { transform: translate(-1px, 1px); }
-    80% { transform: translate(1px, -1px); }
-    90% { transform: translate(-0.5px, 0.5px); }
-    100% { transform: translate(0, 0); }
 }
 
 /* Адаптация для мобильных устройств */

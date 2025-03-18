@@ -220,6 +220,46 @@ body, html {
     100% { opacity: 0; }
 }
 
+/* Музыкальный плеер */
+#music-player {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #0ff;
+    box-shadow: 0 0 10px #0ff;
+    padding: 10px;
+    z-index: 3;
+    color: #0ff;
+    font-size: 1em;
+    animation: flicker 3s infinite;
+}
+
+#track-info {
+    margin-bottom: 5px;
+}
+
+.player-controls {
+    display: flex;
+    gap: 10px;
+}
+
+#prev-track, #play-pause, #next-track {
+    background: transparent;
+    border: 1px solid #0ff;
+    color: #0ff;
+    font-size: 1em;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#prev-track:hover, #play-pause:hover, #next-track:hover {
+    background: #0ff;
+    color: #000;
+    transform: scale(1.1);
+}
+
 /* Футер */
 .footer {
     position: fixed;
@@ -288,6 +328,17 @@ body, html {
         right: 10px;
         font-size: 0.9em;
     }
+
+    #music-player {
+        top: 10px;
+        left: 10px;
+        padding: 5px;
+        font-size: 0.9em;
+    }
+
+    #prev-track, #play-pause, #next-track {
+        padding: 3px 8px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -316,5 +367,16 @@ body, html {
         bottom: 40px;
         right: 5px;
         font-size: 0.8em;
+    }
+
+    #music-player {
+        top: 5px;
+        left: 5px;
+        padding: 3px;
+        font-size: 0.8em;
+    }
+
+    #prev-track, #play-pause, #next-track {
+        padding: 2px 6px;
     }
 }

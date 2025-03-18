@@ -22,6 +22,7 @@ const overloadMessage = document.getElementById('overload-message');
 const terminalOutput = document.getElementById('terminal-output');
 const terminalInput = document.getElementById('terminal-input');
 const loadingScreen = document.getElementById('loading-screen');
+const loadingLog = document.getElementById('loading-log');
 const playPauseBtn = document.getElementById('play-pause');
 const prevTrackBtn = document.getElementById('prev-track');
 const nextTrackBtn = document.getElementById('next-track');
@@ -33,8 +34,54 @@ const terminal = document.getElementById('terminal');
 const steamBtn = document.querySelector('.steam-btn');
 let rect = nickname.getBoundingClientRect();
 
-// Проверка, что loadingScreen найден
+// Проверка, что элементы найдены
 console.log('loadingScreen element:', loadingScreen);
+console.log('loadingLog element:', loadingLog);
+
+// Инициализация лога
+let logText = 'load video: pending\nload scripts: pending';
+if (loadingLog) {
+    loadingLog.textContent = logText;
+}
+
+// Состояние загрузки
+let isVideoLoaded = false;
+let isScriptsLoaded = false;
+
+// Обновление лога
+function updateLoadingLog(message) {
+    if (loadingLog) {
+        logText += `\n${message}`;
+        loadingLog.textContent = logText;
+    }
+}
+
+// Проверка загрузки видео
+video.addEventListener('loadeddata', () => {
+    isVideoLoaded = true;
+    updateLoadingLog('load video: success');
+    checkAllLoaded();
+});
+
+video.addEventListener('error', () => {
+    isVideoLoaded = true; // Считаем ошибку как завершение
+    updateLoadingLog('load video: failed');
+    checkAllLoaded();
+});
+
+// Проверка загрузки скриптов (на основе загрузки окна)
+window.addEventListener('load', () => {
+    isScriptsLoaded = true;
+    updateLoadingLog('load scripts: success');
+    checkAllLoaded();
+});
+
+// Проверка всех ресурсов
+function checkAllLoaded() {
+    if (isVideoLoaded && isScriptsLoaded) {
+        hideLoadingScreen();
+    }
+}
 
 // Экран загрузки с гарантированным тайм-аутом
 function hideLoadingScreen() {
@@ -47,14 +94,25 @@ function hideLoadingScreen() {
     }
 }
 
-// Тайм-аут на 5 секунд для скрытия экрана загрузки
+// Тайм-аут на 3 секунды для проверки загрузки
 setTimeout(() => {
-    console.log('5-second timeout reached. Hiding loading screen.');
-    hideLoadingScreen();
-}, 5000);
+    console.log('3-second check reached.');
+    updateLoadingLog('3s check: evaluating...');
+    if (!isVideoLoaded || !isScriptsLoaded) {
+        console.log('Not all resources loaded, waiting 5 more seconds.');
+        updateLoadingLog('waiting 5s timeout...');
+        setTimeout(() => {
+            console.log('5-second timeout reached. Hiding loading screen.');
+            hideLoadingScreen();
+        }, 5000); // Дополнительные 5 секунд
+    } else {
+        console.log('All resources loaded, hiding immediately.');
+        hideLoadingScreen();
+    }
+}, 3000); // 3 секунды
 
 // Цифровой дождь (Matrix Rain)
-const matrixChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const matrixChars = "❤1337HONEOYE!@#</3";
 const fontSize = 14;
 const columns = canvasMatrix.width / fontSize;
 const drops = Array(Math.floor(columns)).fill(1);
@@ -412,7 +470,7 @@ terminalInput.addEventListener('keypress', (e) => {
 
 // Музыкальный плеер
 const tracks = [
-    { url: "/track2.mp3", name: "Cyber Track" },
+    { url: "/track2.mp3", name: "Sewerslvt - she.mp3" },
 ];
 
 let currentTrackIndex = 0;

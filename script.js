@@ -17,13 +17,17 @@ const overloadMessage = document.getElementById('overload-message');
 const terminalOutput = document.getElementById('terminal-output');
 const terminalInput = document.getElementById('terminal-input');
 const loadingScreen = document.getElementById('loading-screen');
-let rect = nickname.getBoundingClientRect();
+const playPauseBtn = document.getElementById('play-pause');
+const prevTrackBtn = document.getElementById('prev-track');
+const nextTrackBtn = document.getElementById('next-track');
+const currentTrack = document.getElementById('current-track');
+let rect = nickname.getContext('2d');
 
 // Экран загрузки
 window.addEventListener('load', () => {
     setTimeout(() => {
         loadingScreen.classList.add('hidden');
-    }, 3000); // Экран загрузки показывается 3 секунды
+    }, 3000);
 });
 
 // Цифровой дождь (Matrix Rain)
@@ -220,6 +224,55 @@ terminalInput.addEventListener('keypress', (e) => {
         }
         terminalInput.value = '';
     }
+});
+
+// Музыкальный плеер
+const tracks = [
+    { url: "https://example.com/track1.mp3", name: "Cyber Pulse" },
+    { url: "https://example.com/track2.mp3", name: "Neon Drift" },
+    { url: "https://example.com/track3.mp3", name: "Wired Echo" }
+    // Замени на свои ссылки (например, Google Drive: https://drive.google.com/uc?export=download&id=ИД_ФАЙЛА)
+];
+
+let currentTrackIndex = 0;
+let audio = new Audio();
+
+function loadTrack(index) {
+    currentTrackIndex = (index + tracks.length) % tracks.length;
+    audio.src = tracks[currentTrackIndex].url;
+    currentTrack.textContent = tracks[currentTrackIndex].name;
+    audio.play().catch(() => {
+        playPauseBtn.textContent = "▶ (Tap to start)";
+        playPauseBtn.onclick = () => audio.play();
+    });
+}
+
+function playPause() {
+    if (audio.paused) {
+        audio.play();
+        playPauseBtn.textContent = "❚❚";
+    } else {
+        audio.pause();
+        playPauseBtn.textContent = "▶";
+    }
+}
+
+function prevTrack() {
+    loadTrack(currentTrackIndex - 1);
+    playPause();
+}
+
+function nextTrack() {
+    loadTrack(currentTrackIndex + 1);
+    playPause();
+}
+
+playPauseBtn.addEventListener('click', playPause);
+prevTrackBtn.addEventListener('click', prevTrack);
+nextTrackBtn.addEventListener('click', nextTrack);
+
+window.addEventListener('load', () => {
+    loadTrack(Math.floor(Math.random() * tracks.length));
 });
 
 video.addEventListener('error', () => {

@@ -248,8 +248,8 @@ terminalInput.addEventListener('keypress', (e) => {
 
 // Музыкальный плеер
 const tracks = [
-    { url: "https://example.com/track1.mp3", name: "Cyber Pulse" },
-    { url: "https://example.com/track2.mp3", name: "Neon Drift" },
+    { url: "https://drive.google.com/uc?export=download&id=1Y9qzwlbip3UTgNysyRr7qCBXpAGdyFf1", name: "mindvacy - outer heaven.mp3" },
+    { url: "https://drive.google.com/uc?export=download&id=1Y9gmieMff_TWd9g7bT4h5d-B46jPa5FS", name: "Sewerslvt - her.mp3" },
     { url: "https://example.com/track3.mp3", name: "Wired Echo" }
     // Замени на свои ссылки (например, https://drive.google.com/uc?export=download&id=ИД_ФАЙЛА)
 ];

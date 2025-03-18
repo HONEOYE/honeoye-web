@@ -13,6 +13,11 @@ const ctxWires = canvasWires.getContext('2d');
 canvasWires.width = window.innerWidth;
 canvasWires.height = window.innerHeight;
 
+const canvasTunnel = document.getElementById('tunnel');
+const ctxTunnel = canvasTunnel.getContext('2d');
+canvasTunnel.width = window.innerWidth;
+canvasTunnel.height = window.innerHeight;
+
 const nickname = document.getElementById('nickname');
 const video = document.getElementById('background-video');
 const visitCount = document.getElementById('visit-count');
@@ -31,6 +36,9 @@ const notifications = document.getElementById('notifications');
 const musicPlayer = document.getElementById('music-player');
 const terminal = document.getElementById('terminal');
 const steamBtn = document.querySelector('.steam-btn');
+const tunnelOverlay = document.createElement('div');
+tunnelOverlay.id = 'tunnel-overlay';
+document.body.appendChild(tunnelOverlay);
 let rect = nickname.getBoundingClientRect();
 
 // Экран загрузки с эффектом "переключения каналов"
@@ -58,7 +66,7 @@ window.addEventListener('load', () => {
 });
 
 // Цифровой дождь (Matrix Rain)
-const matrixChars = "❤1337HONEOYE</3";
+const matrixChars = "❤1337HONEOYE!@#</3";
 const fontSize = 14;
 const columns = canvasMatrix.width / fontSize;
 const drops = Array(Math.floor(columns)).fill(1);
@@ -170,7 +178,7 @@ nickname.addEventListener('mousemove', (e) => {
     particle.style.top = `${e.clientY}px`;
     particle.style.color = '#0ff';
     particle.style.fontSize = '14px';
-    particle.style.pointerEvents = 'none';
+    particle.style.pointer-events = 'none';
     particle.style.animation = 'particle-rise 1s forwards';
     document.body.appendChild(particle);
     setTimeout(() => particle.remove(), 1000);
@@ -244,13 +252,11 @@ setInterval(showNotification, Math.random() * 10000 + 10000);
 
 // Случайные системные сбои
 function systemGlitch() {
-    if (Math.random() < 0.05) { // 5% вероятность
-        // Приостанавливаем анимации
+    if (Math.random() < 0.05) {
         document.body.style.animationPlayState = 'paused';
         canvasNoise.classList.add('glitch');
         nickname.classList.add('rgb-glitch');
 
-        // Эффект "зависания" длится 1 секунду
         setTimeout(() => {
             document.body.style.animationPlayState = 'running';
             canvasNoise.classList.remove('glitch');
@@ -258,11 +264,10 @@ function systemGlitch() {
             addToTerminal("System stabilized.");
         }, 1000);
     }
-    // Проверяем каждые 30-60 секунд
     setTimeout(systemGlitch, Math.random() * 30000 + 30000);
 }
 
-setTimeout(systemGlitch, 30000); // Первая проверка через 30 секунд
+setTimeout(systemGlitch, 30000);
 
 // Интерактивные провода
 let mouseX = 0;
@@ -273,7 +278,6 @@ const targets = [
     { element: steamBtn, x: 0, y: 0 }
 ];
 
-// Обновляем координаты целей
 function updateTargetPositions() {
     targets.forEach(target => {
         const rect = target.element.getBoundingClientRect();
@@ -284,7 +288,6 @@ function updateTargetPositions() {
 
 updateTargetPositions();
 
-// Хранилище линий и частиц
 const wires = [];
 const particles = [];
 
@@ -292,7 +295,6 @@ document.addEventListener('mousemove', (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
 
-    // Создаём линии к целям
     targets.forEach(target => {
         wires.push({
             startX: mouseX,
@@ -300,10 +302,9 @@ document.addEventListener('mousemove', (e) => {
             endX: target.x,
             endY: target.y,
             opacity: 1,
-            lifetime: 2000 // 2 секунды
+            lifetime: 2000
         });
 
-        // Создаём частицы, движущиеся по линии
         for (let i = 0; i < 3; i++) {
             particles.push({
                 x: mouseX,
@@ -320,9 +321,8 @@ document.addEventListener('mousemove', (e) => {
 function drawWires() {
     ctxWires.clearRect(0, 0, canvasWires.width, canvasWires.height);
 
-    // Рисуем линии
     wires.forEach((wire, index) => {
-        wire.opacity -= 1 / (wire.lifetime / 1000 * 60); // Уменьшаем прозрачность
+        wire.opacity -= 1 / (wire.lifetime / 1000 * 60);
         if (wire.opacity <= 0) {
             wires.splice(index, 1);
             return;
@@ -336,7 +336,6 @@ function drawWires() {
         ctxWires.stroke();
     });
 
-    // Рисуем и обновляем частицы
     particles.forEach((particle, index) => {
         particle.progress += particle.speed;
         if (particle.progress >= 1) {
@@ -357,6 +356,66 @@ function drawWires() {
 }
 
 drawWires();
+
+// Цифровой тоннель
+let tunnelActive = false;
+
+function drawTunnel(progress) {
+    ctxTunnel.clearRect(0, 0, canvasTunnel.width, canvasTunnel.height);
+    ctxTunnel.fillStyle = 'rgba(0, 0, 0, 0.9)';
+    ctxTunnel.fillRect(0, 0, canvasTunnel.width, canvasTunnel.height);
+
+    const centerX = canvasTunnel.width / 2;
+    const centerY = canvasTunnel.height / 2;
+    const maxDepth = 200;
+    const speed = 0.05;
+
+    for (let z = maxDepth; z > -maxDepth; z -= 5) {
+        const scale = 1 + (maxDepth - z) * 0.005;
+        const alpha = 1 - Math.abs(z / maxDepth);
+        const offset = z * speed * progress;
+
+        ctxTunnel.save();
+        ctxTunnel.translate(centerX, centerY);
+        ctxTunnel.scale(scale, scale);
+        ctxTunnel.translate(-centerX, -centerY);
+
+        // Символы в туннеле
+        const char = matrixChars.charAt(Math.floor(Math.random() * matrixChars.length));
+        ctxTunnel.fillStyle = `rgba(0, 255, 255, ${alpha})`;
+        ctxTunnel.font = `${fontSize * scale}px monospace`;
+        ctxTunnel.fillText(char, centerX + Math.sin(offset) * 50, centerY + Math.cos(offset) * 50);
+
+        // Линии туннеля
+        ctxTunnel.beginPath();
+        ctxTunnel.moveTo(0, centerY + z);
+        ctxTunnel.lineTo(canvasTunnel.width, centerY + z);
+        ctxTunnel.strokeStyle = `rgba(0, 255, 255, ${alpha * 0.5})`;
+        ctxTunnel.lineWidth = 1;
+        ctxTunnel.stroke();
+
+        ctxTunnel.restore();
+    }
+
+    if (progress < 1) {
+        requestAnimationFrame(() => drawTunnel(progress + 0.02));
+    } else {
+        canvasTunnel.classList.remove('active');
+        tunnelOverlay.classList.remove('active');
+        tunnelActive = false;
+        addToTerminal("Return to reality.");
+    }
+}
+
+function startTunnel() {
+    if (!tunnelActive) {
+        tunnelActive = true;
+        canvasTunnel.classList.add('active');
+        tunnelOverlay.classList.add('active');
+        addToTerminal("Entering The Wired tunnel...");
+        drawTunnel(0);
+    }
+}
 
 // Терминал и мини-игра "взлома"
 let gameActive = false;
@@ -393,7 +452,7 @@ terminalInput.addEventListener('keypress', (e) => {
         } else {
             switch (command) {
                 case 'help':
-                    addToTerminal("Commands: whoami, wired, clear, cheat");
+                    addToTerminal("Commands: whoami, wired, clear, cheat, tunnel");
                     break;
                 case 'whoami':
                     addToTerminal("HONEOYE");
@@ -414,6 +473,9 @@ terminalInput.addEventListener('keypress', (e) => {
                     break;
                 case 'cheat':
                     addToTerminal("Only the Wired knows... just skill.");
+                    break;
+                case 'tunnel':
+                    startTunnel();
                     break;
                 default:
                     addToTerminal("Unknown command. Type 'help' for commands.");
@@ -487,6 +549,8 @@ window.addEventListener('resize', () => {
     canvasMatrix.height = window.innerHeight;
     canvasWires.width = window.innerWidth;
     canvasWires.height = window.innerHeight;
+    canvasTunnel.width = window.innerWidth;
+    canvasTunnel.height = window.innerHeight;
     rect = nickname.getBoundingClientRect();
     updateTargetPositions();
 });

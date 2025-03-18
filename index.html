@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HONEOYE</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="video-background" id="video-background">
         <video autoplay muted loop id="background-video">
-            <source src="./background.mp4" type="video/mp4">
+            <!-- Попробуем видео с Vimeo -->
+            <source src="https://player.vimeo.com/progressive_redirect/playback/87654321/rendition/1080p/file.mp4?loc=external&signature=abc123" type="video/mp4">
             Ваш браузер не поддерживает видео.
         </video>
         <div class="fallback-bg"></div>
@@ -28,6 +29,6 @@
     </div>
     <canvas id="smoke"></canvas>
     <canvas id="noise"></canvas>
-    <script src="script.js"></script>
+    <script src="/script.js"></script>
 </body>
 </html>

@@ -4,7 +4,7 @@ body, html {
     height: 100%;
     overflow: hidden;
     background: #000;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Orbitron', sans-serif;
 }
 
 .video-background {
@@ -13,7 +13,7 @@ body, html {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -1;
+    z-index: -2;
     background: rgba(0, 0, 0, 0.7);
     animation: glitchVideo 5s infinite;
 }
@@ -22,6 +22,22 @@ body, html {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+.fallback-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('https://via.placeholder.com/1920x1080?text=Video+Fallback') no-repeat center;
+    background-size: cover;
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+.video-background video:not([src]) ~ .fallback-bg {
+    opacity: 1;
 }
 
 @keyframes glitchVideo {
@@ -44,7 +60,7 @@ body, html {
 }
 
 .nickname {
-    font-size: 4em;
+    font-size: 4.5em;
     color: #fff;
     display: flex;
     text-transform: uppercase;
@@ -53,9 +69,9 @@ body, html {
 }
 
 .nickname span {
-    opacity: 1;
-    text-shadow: 0 0 15px #0ff, 0 0 25px #0ff;
-    animation: initialGlitch 2s ease-in-out forwards;
+    opacity: 0;
+    text-shadow: 0 0 10px #0ff, 0 0 20px #0ff;
+    animation: smoothGlitch 2s ease-in-out forwards;
 }
 
 .nickname span:nth-child(1) { animation-delay: 0.2s; }
@@ -66,20 +82,18 @@ body, html {
 .nickname span:nth-child(6) { animation-delay: 1.2s; }
 .nickname span:nth-child(7) { animation-delay: 1.4s; }
 
-@keyframes initialGlitch {
-    0% { opacity: 0; transform: translateY(50px) skew(10deg); }
-    20% { opacity: 1; transform: translateY(-10px) skew(-10deg); }
-    22% { opacity: 0.5; transform: translateY(5px) skew(5deg); }
-    24% { opacity: 1; transform: translateY(-5px) skew(-5deg); }
-    100% { opacity: 1; transform: translateY(0) skew(0); }
+@keyframes smoothGlitch {
+    0% { opacity: 0; transform: translateY(30px); }
+    50% { opacity: 0.8; transform: translateY(-5px); }
+    100% { opacity: 1; transform: translateY(0); text-shadow: 0 0 20px #0ff, 0 0 40px #0ff; }
 }
 
-@keyframes glitch {
+@keyframes randomGlitch {
     0%, 100% { transform: translate(0); }
-    10% { transform: translate(-5px, 5px) skew(5deg); }
-    20% { transform: translate(5px, -5px) skew(-5deg); }
-    30% { transform: translate(-3px, 3px) skew(3deg); }
-    40% { transform: translate(3px, -3px) skew(-3deg); }
+    10% { transform: translate(-3px, 3px); }
+    20% { transform: translate(3px, -3px); }
+    30% { transform: translate(-2px, 2px); }
+    40% { transform: translate(2px, -2px); }
 }
 
 .steam-btn-wrapper {
@@ -100,7 +114,7 @@ body, html {
     box-shadow: 0 0 20px #415a77;
     transition: all 0.3s ease;
     position: relative;
-    z-index: 1;
+    z-index: 2; /* Выше шума */
 }
 
 .steam-btn:hover {
@@ -137,16 +151,16 @@ body, html {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 2;
+    z-index: 1; /* Ниже контента, выше фона */
     pointer-events: none;
-    opacity: 0.1;
+    opacity: 0.15;
 }
 
-#particles {
+#smoke {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 1;
+    z-index: 0;
 }

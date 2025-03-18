@@ -48,7 +48,7 @@ window.addEventListener('load', () => {
 });
 
 // Цифровой дождь (Matrix Rain)
-const matrixChars = "❤1337HONEOYE!@#";
+const matrixChars = "❤1337HONEOYE!@#</3";
 const fontSize = 14;
 const columns = canvasMatrix.width / fontSize;
 const drops = Array(Math.floor(columns)).fill(1);
@@ -56,7 +56,7 @@ const drops = Array(Math.floor(columns)).fill(1);
 function drawMatrixRain() {
     ctxMatrix.fillStyle = "rgba(0, 0, 0, 0.05)";
     ctxMatrix.fillRect(0, 0, canvasMatrix.width, canvasMatrix.height);
-    ctxMatrix.fillStyle = "#0ff"; // Изменили цвет на неоновый циан
+    ctxMatrix.fillStyle = "#0ff"; // Неоновый циан, как в стилистике сайта
     ctxMatrix.font = fontSize + "px monospace";
 
     for (let i = 0; i < drops.length; i++) {
@@ -168,32 +168,13 @@ document.addEventListener('click', () => {
     lastClickTime = currentTime;
 
     if (clickCount > 5) {
-        // Показываем красную полосу с текстом
+        // Показываем красную полосу с текстом и эффектом мигания
         overloadMessage.textContent = 'System Overload!';
         overloadMessage.style.display = 'block';
 
-        // Применяем потряхивание и глитч ко всем объектам
-        const elementsToShake = [
-            document.querySelector('.content'),
-            document.querySelector('#music-player'),
-            document.querySelector('#terminal'),
-            document.querySelector('.footer')
-        ];
-
-        elementsToShake.forEach(element => {
-            if (element) {
-                element.classList.add('overload-shake');
-            }
-        });
-
-        // Останавливаем эффект через 5 секунд
+        // Убрали потряхивание объектов, оставили только мигание полосы
         setTimeout(() => {
             overloadMessage.style.display = 'none';
-            elementsToShake.forEach(element => {
-                if (element) {
-                    element.classList.remove('overload-shake');
-                }
-            });
             clickCount = 0;
         }, 5000);
     }

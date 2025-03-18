@@ -100,3 +100,36 @@ body, html {
     pointer-events: none;
     opacity: 0.2;
 }
+
+/* Адаптация для мобильных устройств */
+@media (max-width: 768px) {
+    .nickname {
+        font-size: 3em;
+    }
+
+    .steam-btn {
+        padding: 10px 20px;
+        font-size: 1.2em;
+    }
+
+    .steam-icon {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .nickname {
+        font-size: 2em;
+    }
+
+    .steam-btn {
+        padding: 8px 16px;
+        font-size: 1em;
+    }
+
+    .steam-icon {
+        width: 16px;
+        height: 16px;
+    }
+}

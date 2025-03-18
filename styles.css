@@ -4,6 +4,7 @@ body, html {
     height: 100%;
     overflow: hidden;
     background: #000;
+    font-family: 'Arial', sans-serif;
 }
 
 .video-background {
@@ -13,13 +14,23 @@ body, html {
     width: 100%;
     height: 100%;
     z-index: -1;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.7);
+    animation: glitchVideo 5s infinite;
 }
 
 .video-background video {
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+@keyframes glitchVideo {
+    0% { transform: translate(0); }
+    20% { transform: translate(-5px, 5px); }
+    40% { transform: translate(5px, -5px); }
+    60% { transform: translate(-3px, 3px); }
+    80% { transform: translate(3px, -3px); }
+    100% { transform: translate(0); }
 }
 
 .content {
@@ -33,65 +44,121 @@ body, html {
 }
 
 .nickname {
-    font-size: 5em;
-    font-family: 'Arial', sans-serif;
+    font-size: 4em;
     color: #fff;
     display: flex;
     text-transform: uppercase;
+    transition: transform 0.1s ease;
 }
 
 .nickname span {
     opacity: 0;
     text-shadow: 0 0 15px #0ff, 0 0 25px #0ff;
-    animation: liftOff 1.5s ease-out forwards;
+    animation: glitch 2s ease-in-out forwards, reassemble 10s infinite 5s;
 }
 
-.nickname span:nth-child(1) { animation-delay: 0.2s; }
-.nickname span:nth-child(2) { animation-delay: 0.4s; }
-.nickname span:nth-child(3) { animation-delay: 0.6s; }
-.nickname span:nth-child(4) { animation-delay: 0.8s; }
-.nickname span:nth-child(5) { animation-delay: 1.0s; }
-.nickname span:nth-child(6) { animation-delay: 1.2s; }
-.nickname span:nth-child(7) { animation-delay: 1.4s; }
+.nickname span:nth-child(1) { animation-delay: 0.2s, 5s; }
+.nickname span:nth-child(2) { animation-delay: 0.4s, 5s; }
+.nickname span:nth-child(3) { animation-delay: 0.6s, 5s; }
+.nickname span:nth-child(4) { animation-delay: 0.8s, 5s; }
+.nickname span:nth-child(5) { animation-delay: 1.0s, 5s; }
+.nickname span:nth-child(6) { animation-delay: 1.2s, 5s; }
+.nickname span:nth-child(7) { animation-delay: 1.4s, 5s; }
 
-@keyframes liftOff {
-    0% { opacity: 0; transform: translateY(100px) rotate(10deg); }
-    50% { opacity: 1; transform: translateY(-20px) rotate(-5deg); }
-    100% { opacity: 1; transform: translateY(0) rotate(0); text-shadow: 0 0 20px #0ff, 0 0 40px #0ff; }
+@keyframes glitch {
+    0% { opacity: 0; transform: translateY(50px) skew(10deg); }
+    20% { opacity: 1; transform: translateY(-10px) skew(-10deg); }
+    22% { opacity: 0.5; transform: translateY(5px) skew(5deg); }
+    24% { opacity: 1; transform: translateY(-5px) skew(-5deg); }
+    100% { opacity: 1; transform: translateY(0) skew(0); text-shadow: 0 0 30px #0ff, 0 0 50px #0ff; }
 }
 
-.nickname:hover span {
-    animation: pulse 0.5s infinite alternate;
+@keyframes reassemble {
+    0% { opacity: 1; transform: translateY(0) skew(0); }
+    10% { opacity: 0; transform: translateY(-50px) skew(15deg); }
+    15% { opacity: 0; transform: translateY(50px) skew(-15deg); }
+    20% { opacity: 1; transform: translateY(0) skew(0); }
+    100% { opacity: 1; transform: translateY(0) skew(0); }
 }
 
-@keyframes pulse {
-    from { text-shadow: 0 0 20px #0ff, 0 0 40px #0ff; }
-    to { text-shadow: 0 0 30px #fff, 0 0 60px #0ff; }
+body[data-theme="cyan"] .nickname span {
+    text-shadow: 0 0 30px #0ff, 0 0 50px #0ff;
+}
+
+body[data-theme="purple"] .nickname span {
+    text-shadow: 0 0 30px #f0f, 0 0 50px #f0f;
+}
+
+body[data-theme="cyan"] .steam-btn {
+    background: linear-gradient(135deg, #1b263b, #415a77);
+    box-shadow: 0 0 20px #415a77;
+}
+
+body[data-theme="purple"] .steam-btn {
+    background: linear-gradient(135deg, #2b1b3b, #7741a7);
+    box-shadow: 0 0 20px #7741a7;
+}
+
+.steam-btn-wrapper {
+    position: relative;
+    margin-top: 40px;
 }
 
 .steam-btn {
-    margin-top: 30px;
-    padding: 12px 25px;
-    font-size: 1.5em;
+    padding: 15px 30px;
+    font-size: 1.8em;
     color: #fff;
-    background: linear-gradient(135deg, #171717, #1b87e8);
     border-radius: 50px;
     text-decoration: none;
     display: flex;
     align-items: center;
-    gap: 10px;
-    box-shadow: 0 0 15px #1b87e8;
+    gap: 15px;
     transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
 }
 
 .steam-btn:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0 25px #1b87e8, 0 0 40px #66ccff;
-    background: linear-gradient(135deg, #1b87e8, #66ccff);
+    transform: scale(1.1);
+}
+
+.steam-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.5s, height 0.5s;
+    z-index: -1;
+}
+
+.steam-btn:hover::before {
+    width: 200px;
+    height: 200px;
 }
 
 .steam-icon {
     fill: #fff;
+}
+
+.theme-toggle {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1em;
+    color: #fff;
+    background: #333;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.theme-toggle:hover {
+    background: #555;
 }
 
 #particles {

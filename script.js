@@ -21,9 +21,11 @@ const playPauseBtn = document.getElementById('play-pause');
 const prevTrackBtn = document.getElementById('prev-track');
 const nextTrackBtn = document.getElementById('next-track');
 const currentTrack = document.getElementById('current-track');
+const signalHijack = document.getElementById('signal-hijack');
+const notifications = document.getElementById('notifications');
 let rect = nickname.getBoundingClientRect();
 
-// Экран загрузки
+// Экран загрузки с эффектом "переключения каналов"
 function hideLoadingScreen() {
     loadingScreen.classList.add('hidden');
 }
@@ -34,16 +36,16 @@ video.addEventListener('loadeddata', () => {
     console.log('Видео успешно загружено.');
     isVideoLoaded = true;
     if (document.readyState === 'complete') {
-        hideLoadingScreen();
+        setTimeout(hideLoadingScreen, 2000); // Задержка для эффекта "канала"
     }
 });
 
 window.addEventListener('load', () => {
     console.log('Страница полностью загружена.');
     if (isVideoLoaded) {
-        hideLoadingScreen();
+        setTimeout(hideLoadingScreen, 2000);
     } else {
-        setTimeout(hideLoadingScreen, 3000);
+        setTimeout(hideLoadingScreen, 5000);
     }
 });
 
@@ -56,7 +58,7 @@ const drops = Array(Math.floor(columns)).fill(1);
 function drawMatrixRain() {
     ctxMatrix.fillStyle = "rgba(0, 0, 0, 0.05)";
     ctxMatrix.fillRect(0, 0, canvasMatrix.width, canvasMatrix.height);
-    ctxMatrix.fillStyle = "#0ff"; // Неоновый циан
+    ctxMatrix.fillStyle = "#0ff";
     ctxMatrix.font = fontSize + "px monospace";
 
     for (let i = 0; i < drops.length; i++) {
@@ -154,10 +156,24 @@ nickname.addEventListener('click', (e) => {
     }
 });
 
+// Частицы при наведении на ник
+nickname.addEventListener('mousemove', (e) => {
+    const particle = document.createElement('span');
+    particle.textContent = matrixChars.charAt(Math.floor(Math.random() * matrixChars.length));
+    particle.style.position = 'absolute';
+    particle.style.left = `${e.clientX}px`;
+    particle.style.top = `${e.clientY}px`;
+    particle.style.color = '#0ff';
+    particle.style.fontSize = '14px';
+    particle.style.pointerEvents = 'none';
+    particle.style.animation = 'particle-rise 1s forwards';
+    document.body.appendChild(particle);
+    setTimeout(() => particle.remove(), 1000);
+});
+
 // Эффект перегрузки при частых кликах
 let clickCount = 0;
 let lastClickTime = 0;
-let alarmInterval;
 
 document.addEventListener('click', () => {
     const currentTime = Date.now();
@@ -169,15 +185,11 @@ document.addEventListener('click', () => {
     lastClickTime = currentTime;
 
     if (clickCount > 5) {
-        // Вспышки на весь экран
         document.body.style.animation = 'overload 0.5s infinite';
-
-        // Показываем полосу с эффектом alarm (появление и исчезновение)
         overloadMessage.textContent = 'System Overload!';
         overloadMessage.style.display = 'block';
-        overloadMessage.style.animation = 'alarm 1s infinite'; // Эффект alarm
+        overloadMessage.style.animation = 'alarm 1s infinite';
 
-        // Останавливаем эффект через 5 секунд
         setTimeout(() => {
             document.body.style.animation = 'none';
             overloadMessage.style.display = 'none';
@@ -205,7 +217,30 @@ function createGlitchArtifact() {
 
 setInterval(createGlitchArtifact, 5000);
 
-// Терминал
+// Уведомления
+const notificationMessages = [
+    "Connection unstable...",
+    "Firewall breached!",
+    "Intrusion detected!",
+    "Data stream corrupted...",
+    "System integrity at 75%"
+];
+
+function showNotification() {
+    const message = notificationMessages[Math.floor(Math.random() * notificationMessages.length)];
+    const notification = document.createElement('div');
+    notification.classList.add('notification');
+    notification.textContent = message;
+    notifications.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+}
+
+setInterval(showNotification, Math.random() * 10000 + 10000);
+
+// Терминал и мини-игра "взлома"
+let gameActive = false;
+let secretCode = Math.floor(Math.random() * 1000); // Код от 0 до 999
+
 function addToTerminal(message) {
     const line = document.createElement('div');
     line.textContent = message;
@@ -220,21 +255,48 @@ terminalInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         const command = terminalInput.value.trim().toLowerCase();
         addToTerminal(`> ${command}`);
-        switch (command) {
-            case 'help':
-                addToTerminal("Commands: whoami, wired, clear");
-                break;
-            case 'whoami':
-                addToTerminal("HONEOYE");
-                break;
-            case 'wired':
-                addToTerminal("The Wired is watching you...");
-                break;
-            case 'clear':
-                terminalOutput.innerHTML = '';
-                break;
-            default:
-                addToTerminal("Unknown command. Type 'help' for commands.");
+
+        if (gameActive) {
+            const guess = parseInt(command);
+            if (isNaN(guess)) {
+                addToTerminal("Enter a number to guess the code!");
+            } else if (guess === secretCode) {
+                addToTerminal("Access granted! Website hacked!");
+                gameActive = false;
+                secretCode = Math.floor(Math.random() * 1000); // Новый код
+            } else if (guess < secretCode) {
+                addToTerminal("Too low. Try again.");
+            } else {
+                addToTerminal("Too high. Try again.");
+            }
+        } else {
+            switch (command) {
+                case 'help':
+                    addToTerminal("Commands: whoami, wired, clear, cheat");
+                    break;
+                case 'whoami':
+                    addToTerminal("HONEOYE");
+                    break;
+                case 'wired':
+                    addToTerminal("The Wired is watching you...");
+                    signalHijack.style.display = 'block';
+                    setTimeout(() => {
+                        signalHijack.style.display = 'none';
+                    }, 3000);
+                    break;
+                case 'clear':
+                    terminalOutput.innerHTML = '';
+                    break;
+                case 'hack':
+                    addToTerminal("Starting hacking website... Guess the 3-digit code (0-999).");
+                    gameActive = true;
+                    break;
+                case 'cheat':
+                    addToTerminal("Only the Wired knows... just skill.");
+                    break;
+                default:
+                    addToTerminal("Unknown command. Type 'help' for commands.");
+            }
         }
         terminalInput.value = '';
     }
@@ -243,7 +305,6 @@ terminalInput.addEventListener('keypress', (e) => {
 // Музыкальный плеер
 const tracks = [
     { url: "/track2.mp3", name: "Sewerslvt - her.mp3" },
-    // Добавь другие треки здесь, если есть
 ];
 
 let currentTrackIndex = 0;

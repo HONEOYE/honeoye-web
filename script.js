@@ -41,19 +41,28 @@ tunnelOverlay.id = 'tunnel-overlay';
 document.body.appendChild(tunnelOverlay);
 let rect = nickname.getBoundingClientRect();
 
+// Проверка, что loadingScreen найден
+console.log('loadingScreen element:', loadingScreen);
+
 // Экран загрузки с гарантированным тайм-аутом
 function hideLoadingScreen() {
-    loadingScreen.classList.add('hidden');
+    console.log('Hiding loading screen...');
+    if (loadingScreen) {
+        loadingScreen.classList.add('hidden');
+        console.log('Loading screen hidden.');
+    } else {
+        console.error('loadingScreen element not found.');
+    }
 }
 
 // Тайм-аут на 5 секунд для скрытия экрана загрузки
 setTimeout(() => {
-    console.log('Тайм-аут загрузки (5 секунд). Скрываем экран.');
+    console.log('5-second timeout reached. Hiding loading screen.');
     hideLoadingScreen();
-}, 5000); // 5 секунд
+}, 5000);
 
 // Цифровой дождь (Matrix Rain)
-const matrixChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const matrixChars = "❤1337HONEOYE!@#</3";
 const fontSize = 14;
 const columns = canvasMatrix.width / fontSize;
 const drops = Array(Math.floor(columns)).fill(1);
@@ -472,7 +481,7 @@ terminalInput.addEventListener('keypress', (e) => {
 
 // Музыкальный плеер
 const tracks = [
-    { url: "/track2.mp3", name: "Sewerslvt - her.mp3" },
+    { url: "/track2.mp3", name: "Sewerslvt - she.mp3" },
 ];
 
 let currentTrackIndex = 0;

@@ -1,29 +1,37 @@
+// Частицы
 const canvas = document.getElementById('particles');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const particlesArray = [];
+// Шум
+const noiseCanvas = document.getElementById('noise');
+const noiseCtx = noiseCanvas.getContext('2d');
+
 const nickname = document.getElementById('nickname');
 let rect = nickname.getBoundingClientRect();
+noiseCanvas.width = rect.width;
+noiseCanvas.height = rect.height;
+
+const particlesArray = [];
 
 class Particle {
     constructor() {
-        this.x = rect.left + Math.random() * rect.width;
-        this.y = rect.top + Math.random() * rect.height;
-        this.size = Math.random() * 6 + 2;
-        this.speedX = Math.random() * 4 - 2;
-        this.speedY = Math.random() * 4 - 2;
-        this.life = 150;
+        this.x = rect.left + rect.width / 2;
+        this.y = rect.top + rect.height / 2;
+        this.size = Math.random() * 4 + 1;
+        this.angle = Math.random() * Math.PI * 2;
+        this.speed = Math.random() * 5 + 2;
+        this.life = 100;
     }
     update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
+        this.x += Math.cos(this.angle) * this.speed;
+        this.y += Math.sin(this.angle) * this.speed;
         this.life--;
     }
     draw() {
         const theme = document.body.getAttribute('data-theme');
-        ctx.fillStyle = theme === 'cyan' ? `rgba(0, 255, 255, ${this.life / 150})` : `rgba(255, 0, 255, ${this.life / 150})`;
+        ctx.fillStyle = theme === 'cyan' ? `rgba(0, 255, 255, ${this.life / 100})` : `rgba(255, 0, 255, ${this.life / 100})`;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
@@ -31,7 +39,7 @@ class Particle {
 }
 
 function initParticles() {
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 10; i++) {
         particlesArray.push(new Particle());
     }
 }
@@ -43,14 +51,38 @@ function animateParticles() {
         particlesArray[i].draw();
         if (particlesArray[i].life <= 0) {
             particlesArray.splice(i, 1);
-            particlesArray.push(new Particle());
         }
+    }
+    // Постоянно добавляем новые частицы
+    for (let i = 0; i < 2; i++) {
+        particlesArray.push(new Particle());
     }
     requestAnimationFrame(animateParticles);
 }
 
 initParticles();
 animateParticles();
+
+// Эффект шума
+function generateNoise() {
+    const imageData = noiseCtx.createImageData(noiseCanvas.width, noiseCanvas.height);
+    const data = imageData.data;
+    for (let i = 0; i < data.length; i += 4) {
+        const value = Math.random() * 255;
+        data[i] = value;     // R
+        data[i + 1] = value; // G
+        data[i + 2] = value; // B
+        data[i + 3] = 255;   // A
+    }
+    noiseCtx.putImageData(imageData, 0, 0);
+}
+
+function animateNoise() {
+    generateNoise();
+    requestAnimationFrame(animateNoise);
+}
+
+animateNoise();
 
 // Параллакс-эффект
 document.addEventListener('mousemove', (e) => {
@@ -77,4 +109,6 @@ window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     rect = nickname.getBoundingClientRect();
+    noiseCanvas.width = rect.width;
+    noiseCanvas.height = rect.height;
 });

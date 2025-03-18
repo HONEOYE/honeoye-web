@@ -1,61 +1,55 @@
-// Частицы
-const canvas = document.getElementById('particles');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+const canvasParticles = document.getElementById('particles');
+const ctxParticles = canvasParticles.getContext('2d');
+canvasParticles.width = window.innerWidth;
+canvasParticles.height = window.innerHeight;
 
-// Шум
-const noiseCanvas = document.getElementById('noise');
-const noiseCtx = noiseCanvas.getContext('2d');
-
-const nickname = document.getElementById('nickname');
-let rect = nickname.getBoundingClientRect();
-noiseCanvas.width = rect.width;
-noiseCanvas.height = rect.height;
+const canvasNoise = document.getElementById('noise');
+const ctxNoise = canvasNoise.getContext('2d');
+canvasNoise.width = window.innerWidth;
+canvasNoise.height = window.innerHeight;
 
 const particlesArray = [];
+const nickname = document.getElementById('nickname');
+let rect = nickname.getBoundingClientRect();
 
 class Particle {
     constructor() {
-        this.x = rect.left + rect.width / 2;
-        this.y = rect.top + rect.height / 2;
+        this.x = canvasParticles.width / 2 + (Math.random() - 0.5) * 50; // Брызги из центра
+        this.y = canvasParticles.height / 2 + (Math.random() - 0.5) * 50;
         this.size = Math.random() * 4 + 1;
-        this.angle = Math.random() * Math.PI * 2;
-        this.speed = Math.random() * 5 + 2;
-        this.life = 100;
+        this.speedX = Math.random() * 6 - 3; // Сильное случайное движение
+        this.speedY = Math.random() * 6 - 3;
+        this.life = 200;
     }
     update() {
-        this.x += Math.cos(this.angle) * this.speed;
-        this.y += Math.sin(this.angle) * this.speed;
-        this.life--;
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.life -= 2;
+        if (this.life <= 0 || this.x < 0 || this.x > canvasParticles.width || this.y < 0 || this.y > canvasParticles.height) {
+            this.x = canvasParticles.width / 2 + (Math.random() - 0.5) * 50;
+            this.y = canvasParticles.height / 2 + (Math.random() - 0.5) * 50;
+            this.life = 200;
+        }
     }
     draw() {
-        const theme = document.body.getAttribute('data-theme');
-        ctx.fillStyle = theme === 'cyan' ? `rgba(0, 255, 255, ${this.life / 100})` : `rgba(255, 0, 255, ${this.life / 100})`;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
+        ctxParticles.fillStyle = `rgba(0, 255, 255, ${this.life / 200})`;
+        ctxParticles.beginPath();
+        ctxParticles.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctxParticles.fill();
     }
 }
 
 function initParticles() {
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 50; i++) {
         particlesArray.push(new Particle());
     }
 }
 
 function animateParticles() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for (let i = particlesArray.length - 1; i >= 0; i--) {
+    ctxParticles.clearRect(0, 0, canvasParticles.width, canvasParticles.height);
+    for (let i = 0; i < particlesArray.length; i++) {
         particlesArray[i].update();
         particlesArray[i].draw();
-        if (particlesArray[i].life <= 0) {
-            particlesArray.splice(i, 1);
-        }
-    }
-    // Постоянно добавляем новые частицы
-    for (let i = 0; i < 2; i++) {
-        particlesArray.push(new Particle());
     }
     requestAnimationFrame(animateParticles);
 }
@@ -63,26 +57,34 @@ function animateParticles() {
 initParticles();
 animateParticles();
 
-// Эффект шума
-function generateNoise() {
-    const imageData = noiseCtx.createImageData(noiseCanvas.width, noiseCanvas.height);
-    const data = imageData.data;
-    for (let i = 0; i < data.length; i += 4) {
-        const value = Math.random() * 255;
-        data[i] = value;     // R
-        data[i + 1] = value; // G
-        data[i + 2] = value; // B
-        data[i + 3] = 255;   // A
+// Эффект цифрового шума
+function drawNoise() {
+    ctxNoise.fillStyle = `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255})`;
+    for (let i = 0; i < 1000; i++) {
+        const x = Math.random() * canvasNoise.width;
+        const y = Math.random() * canvasNoise.height;
+        ctxNoise.fillRect(x, y, 1, 1);
     }
-    noiseCtx.putImageData(imageData, 0, 0);
+    requestAnimationFrame(drawNoise);
 }
 
-function animateNoise() {
-    generateNoise();
-    requestAnimationFrame(animateNoise);
+drawNoise();
+
+// Периодический глюк букв
+function glitchLetters() {
+    const spans = nickname.querySelectorAll('span');
+    if (Math.random() < 0.1) { // Глюк каждые 10% кадров
+        spans.forEach(span => {
+            span.style.animation = 'glitch 0.5s';
+            setTimeout(() => {
+                span.style.animation = '';
+            }, 500);
+        });
+    }
+    requestAnimationFrame(glitchLetters);
 }
 
-animateNoise();
+glitchLetters();
 
 // Параллакс-эффект
 document.addEventListener('mousemove', (e) => {
@@ -97,18 +99,11 @@ document.addEventListener('mousemove', (e) => {
     });
 });
 
-// Переключение темы
-const themeToggle = document.getElementById('theme-toggle');
-themeToggle.addEventListener('click', () => {
-    const body = document.body;
-    body.setAttribute('data-theme', body.getAttribute('data-theme') === 'cyan' ? 'purple' : 'cyan');
-});
-
 // Обновление размеров при изменении окна
 window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvasParticles.width = window.innerWidth;
+    canvasParticles.height = window.innerHeight;
+    canvasNoise.width = window.innerWidth;
+    canvasNoise.height = window.innerHeight;
     rect = nickname.getBoundingClientRect();
-    noiseCanvas.width = rect.width;
-    noiseCanvas.height = rect.height;
 });

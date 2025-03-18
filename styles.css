@@ -21,6 +21,7 @@ body, html {
     z-index: 999;
     opacity: 1;
     transition: opacity 1s ease-out;
+    animation: channel-static 1s infinite;
 }
 
 .loading-text {
@@ -33,11 +34,13 @@ body, html {
 #loading-screen.hidden {
     opacity: 0;
     pointer-events: none;
+    display: none; /* Дополнительно скрываем элемент */
 }
 
-@keyframes flicker {
-    0%, 19.9%, 22%, 62.9%, 64%, 100% { opacity: 1; text-shadow: 0 0 10px #0ff, 0 0 20px #f0f; }
-    20%, 21.9%, 63% { opacity: 0.8; text-shadow: 0 0 5px #0ff; }
+@keyframes channel-static {
+    0% { background: #000; }
+    50% { background: #222; }
+    100% { background: #000; }
 }
 
 /* Сканирующая линия */
@@ -156,4 +159,403 @@ body, html {
 }
 
 @keyframes scan-effect {
-    0% { text-shadow: 0
+    0% { text-shadow: 0 0 10px #0ff, 0 0 20px #f0f; }
+    50% { text-shadow: 0 0 20px #0ff, 0 0 40px #f0f; }
+    100% { text-shadow: 0 0 10px #0ff, 0 0 20px #f0f; }
+}
+
+@keyframes rgb-shift {
+    0% { text-shadow: 2px 0 #f00, -2px 0 #0ff, 0 2px #0f0; }
+    50% { text-shadow: -2px 0 #f00, 2px 0 #0ff, 0 -2px #0f0; }
+    100% { text-shadow: 2px 0 #f00, -2px 0 #0ff, 0 2px #0f0; }
+}
+
+.nickname span {
+    display: inline-block;
+}
+
+@keyframes flicker {
+    0%, 19.9%, 22%, 62.9%, 64%, 100% { opacity: 1; text-shadow: 0 0 10px #0ff, 0 0 20px #f0f; }
+    20%, 21.9%, 63% { opacity: 0.8; text-shadow: 0 0 5px #0ff; }
+}
+
+.steam-btn-wrapper {
+    position: relative;
+    margin-top: 40px;
+}
+
+.steam-btn {
+    padding: 15px 30px;
+    font-size: 1.8em;
+    color: #fff;
+    background: linear-gradient(135deg, #1b263b, #415a77);
+    border-radius: 5px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 0 15px #415a77;
+    transition: all 0.3s ease;
+    z-index: 2;
+}
+
+.steam-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px #66ccff;
+}
+
+.steam-icon {
+    fill: #fff;
+}
+
+#noise {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.2;
+}
+
+/* Эффект сильного шума во время сбоя */
+#noise.glitch {
+    opacity: 0.8;
+    animation: glitch-noise 0.5s infinite;
+}
+
+@keyframes glitch-noise {
+    0% { opacity: 0.8; }
+    50% { opacity: 0.9; }
+    100% { opacity: 0.8; }
+}
+
+/* Терминал */
+#terminal {
+    position: fixed;
+    bottom: 60px;
+    right: 20px;
+    width: 300px;
+    max-height: 200px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #0ff;
+    box-shadow: 0 0 10px #0ff;
+    z-index: 3;
+    color: #0ff;
+    font-size: 1em;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+#terminal-output {
+    max-height: 150px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+.terminal-input-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.prompt {
+    color: #0ff;
+    margin-right: 5px;
+}
+
+#terminal-input {
+    background: transparent;
+    border: none;
+    color: #0ff;
+    font-family: 'VT323', monospace;
+    font-size: 1em;
+    outline: none;
+    flex: 1;
+}
+
+/* Случайные артефакты */
+.glitch-artifact {
+    position: fixed;
+    background: #0ff;
+    opacity: 0.5;
+    z-index: 2;
+    animation: glitch-artifact 1s forwards;
+}
+
+@keyframes glitch-artifact {
+    0% { opacity: 0.5; }
+    50% { opacity: 0.8; transform: translate(5px, -5px); }
+    100% { opacity: 0; }
+}
+
+/* Частицы при наведении на ник */
+@keyframes particle-rise {
+    0% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-50px); }
+}
+
+/* Музыкальный плеер */
+#music-player {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #0ff;
+    box-shadow: 0 0 10px #0ff;
+    padding: 10px;
+    z-index: 3;
+    color: #0ff;
+    font-size: 1em;
+    animation: flicker 3s infinite;
+}
+
+#track-info {
+    margin-bottom: 5px;
+}
+
+.player-controls {
+    display: flex;
+    gap: 10px;
+}
+
+#prev-track, #play-pause, #next-track {
+    background: transparent;
+    border: 1px solid #0ff;
+    color: #0ff;
+    font-size: 1em;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#prev-track:hover, #play-pause:hover, #next-track:hover {
+    background: #0ff;
+    color: #000;
+    transform: scale(1.1);
+}
+
+/* Футер */
+.footer {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    color: #fff;
+    text-align: center;
+    font-size: 1.2em;
+    text-shadow: 0 0 5px #0ff;
+    animation: flicker 3s infinite;
+}
+
+#visit-counter, #quote {
+    margin: 5px 0;
+}
+
+/* Эффект System Overload */
+#overload-message {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    padding: 20px;
+    background: rgba(255, 0, 0, 0.5);
+    color: #fff;
+    font-size: 2em;
+    text-shadow: 0 0 10px #f00, 0 0 20px #f00;
+    z-index: 3;
+    text-align: center;
+    border: 2px solid #f00;
+    box-shadow: 0 0 20px #f00;
+}
+
+/* Анимация вспышек на весь экран */
+@keyframes overload {
+    0% { filter: brightness(1); }
+    50% { filter: brightness(1.5); }
+    100% { filter: brightness(1); }
+}
+
+/* Анимация alarm для полосы */
+@keyframes alarm {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+/* Эффект перехвата сигнала */
+#signal-hijack {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 10;
+    animation: static-noise 0.5s infinite;
+}
+
+.hijack-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #f00;
+    font-size: 2em;
+    text-shadow: 0 0 10px #f00;
+    animation: flicker 1s infinite;
+}
+
+@keyframes static-noise {
+    0% { background: rgba(0, 0, 0, 0.9); }
+    50% { background: rgba(50, 50, 50, 0.9); }
+    100% { background: rgba(0, 0, 0, 0.9); }
+}
+
+/* Уведомления */
+#notifications {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 3;
+}
+
+.notification {
+    background: rgba(0, 0, 0, 0.8);
+    border: 1px solid #f00;
+    color: #f00;
+    padding: 5px 10px;
+    margin-bottom: 5px;
+    font-size: 1em;
+    text-shadow: 0 0 5px #f00;
+    animation: fade-out 3s forwards;
+}
+
+@keyframes fade-out {
+    0% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+/* Анимация туннеля */
+@keyframes tunnel-zoom {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(2); opacity: 0.8; }
+    100% { transform: scale(4); opacity: 0; }
+}
+
+/* Адаптация для мобильных устройств */
+@media (max-width: 768px) {
+    .nickname {
+        font-size: 3em;
+    }
+
+    .steam-btn {
+        padding: 10px 20px;
+        font-size: 1.2em;
+    }
+
+    .steam-icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .footer {
+        font-size: 1em;
+        bottom: 10px;
+    }
+
+    #terminal {
+        width: 250px;
+        max-height: 150px;
+        bottom: 50px;
+        right: 10px;
+        font-size: 0.9em;
+    }
+
+    #music-player {
+        top: 10px;
+        left: 10px;
+        padding: 5px;
+        font-size: 0.9em;
+    }
+
+    #prev-track, #play-pause, #next-track {
+        padding: 3px 8px;
+    }
+
+    #overload-message {
+        font-size: 1.5em;
+        padding: 15px;
+        width: 90%;
+    }
+
+    #notifications {
+        top: 10px;
+        right: 10px;
+    }
+
+    .notification {
+        font-size: 0.9em;
+        padding: 3px 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .nickname {
+        font-size: 2em;
+    }
+
+    .steam-btn {
+        padding: 8px 16px;
+        font-size: 1em;
+    }
+
+    .steam-icon {
+        width: 16px;
+        height: 16px;
+    }
+
+    .footer {
+        font-size: 0.8em;
+        bottom: 5px;
+    }
+
+    #terminal {
+        width: 200px;
+        max-height: 120px;
+        bottom: 40px;
+        right: 5px;
+        font-size: 0.8em;
+    }
+
+    #music-player {
+        top: 5px;
+        left: 5px;
+        padding: 3px;
+        font-size: 0.8em;
+    }
+
+    #prev-track, #play-pause, #next-track {
+        padding: 2px 6px;
+    }
+
+    #overload-message {
+        font-size: 1.2em;
+        padding: 10px;
+        width: 90%;
+    }
+
+    #notifications {
+        top: 5px;
+        right: 5px;
+    }
+
+    .notification {
+        font-size: 0.8em;
+        padding: 2px 6px;
+    }
+}

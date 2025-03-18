@@ -7,6 +7,62 @@ body, html {
     font-family: 'VT323', monospace;
 }
 
+/* Экран загрузки */
+#loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    opacity: 1;
+    transition: opacity 1s ease-out;
+}
+
+.loading-text {
+    color: #0ff;
+    font-size: 2em;
+    text-shadow: 0 0 10px #0ff;
+    animation: flicker 1s infinite;
+}
+
+#loading-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Сканирующая линия */
+#scanline {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(to bottom, transparent, rgba(0, 255, 255, 0.5), transparent);
+    z-index: 2;
+    animation: scan 5s infinite;
+}
+
+@keyframes scan {
+    0% { top: 0; }
+    100% { top: 100%; }
+}
+
+/* Цифровой дождь */
+#matrix-rain {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    opacity: 0.3;
+}
+
 .video-background {
     position: fixed;
     top: 0;
@@ -54,7 +110,7 @@ body, html {
     color: #fff;
     text-shadow: 0 0 10px #0ff, 0 0 20px #f0f;
     animation: flicker 3s infinite;
-    cursor: pointer; /* Указывает, что можно кликать */
+    cursor: pointer;
 }
 
 .nickname span {
@@ -106,7 +162,65 @@ body, html {
     opacity: 0.2;
 }
 
-/* Стили для футера */
+/* Терминал */
+#terminal {
+    position: fixed;
+    bottom: 60px;
+    right: 20px;
+    width: 300px;
+    max-height: 200px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #0ff;
+    box-shadow: 0 0 10px #0ff;
+    z-index: 3;
+    color: #0ff;
+    font-size: 1em;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+#terminal-output {
+    max-height: 150px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+.terminal-input-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.prompt {
+    color: #0ff;
+    margin-right: 5px;
+}
+
+#terminal-input {
+    background: transparent;
+    border: none;
+    color: #0ff;
+    font-family: 'VT323', monospace;
+    font-size: 1em;
+    outline: none;
+    flex: 1;
+}
+
+/* Случайные артефакты */
+.glitch-artifact {
+    position: fixed;
+    background: #0ff;
+    opacity: 0.5;
+    z-index: 2;
+    animation: glitch-artifact 1s forwards;
+}
+
+@keyframes glitch-artifact {
+    0% { opacity: 0.5; }
+    50% { opacity: 0.8; transform: translate(5px, -5px); }
+    100% { opacity: 0; }
+}
+
+/* Футер */
 .footer {
     position: fixed;
     bottom: 20px;
@@ -124,7 +238,7 @@ body, html {
     margin: 5px 0;
 }
 
-#secret-message {
+#secret-message, #overload-message {
     display: none;
     position: fixed;
     top: 50%;
@@ -166,6 +280,14 @@ body, html {
         font-size: 1em;
         bottom: 10px;
     }
+
+    #terminal {
+        width: 250px;
+        max-height: 150px;
+        bottom: 50px;
+        right: 10px;
+        font-size: 0.9em;
+    }
 }
 
 @media (max-width: 480px) {
@@ -186,5 +308,13 @@ body, html {
     .footer {
         font-size: 0.8em;
         bottom: 5px;
+    }
+
+    #terminal {
+        width: 200px;
+        max-height: 120px;
+        bottom: 40px;
+        right: 5px;
+        font-size: 0.8em;
     }
 }

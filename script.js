@@ -1,68 +1,70 @@
-const canvasParticles = document.getElementById('particles');
-const ctxParticles = canvasParticles.getContext('2d');
-canvasParticles.width = window.innerWidth;
-canvasParticles.height = window.innerHeight;
+const canvasSmoke = document.getElementById('smoke');
+const ctxSmoke = canvasSmoke.getContext('2d');
+canvasSmoke.width = window.innerWidth;
+canvasSmoke.height = window.innerHeight;
 
 const canvasNoise = document.getElementById('noise');
 const ctxNoise = canvasNoise.getContext('2d');
 canvasNoise.width = window.innerWidth;
 canvasNoise.height = window.innerHeight;
 
-const particlesArray = [];
 const nickname = document.getElementById('nickname');
 let rect = nickname.getBoundingClientRect();
 
-class Particle {
+class Smoke {
     constructor() {
-        this.x = canvasParticles.width / 2 + (Math.random() - 0.5) * 50; // Брызги из центра
-        this.y = canvasParticles.height / 2 + (Math.random() - 0.5) * 50;
-        this.size = Math.random() * 4 + 1;
-        this.speedX = Math.random() * 6 - 3; // Сильное случайное движение
-        this.speedY = Math.random() * 6 - 3;
-        this.life = 200;
+        this.x = Math.random() * canvasSmoke.width;
+        this.y = canvasSmoke.height + Math.random() * 50;
+        this.size = Math.random() * 20 + 10;
+        this.alpha = 0.1;
+        this.speedY = -Math.random() * 0.5 - 0.2;
+        this.speedX = Math.random() * 0.4 - 0.2;
     }
     update() {
-        this.x += this.speedX;
         this.y += this.speedY;
-        this.life -= 2;
-        if (this.life <= 0 || this.x < 0 || this.x > canvasParticles.width || this.y < 0 || this.y > canvasParticles.height) {
-            this.x = canvasParticles.width / 2 + (Math.random() - 0.5) * 50;
-            this.y = canvasParticles.height / 2 + (Math.random() - 0.5) * 50;
-            this.life = 200;
+        this.x += this.speedX;
+        this.alpha -= 0.002;
+        if (this.alpha <= 0 || this.y < -this.size) {
+            this.x = Math.random() * canvasSmoke.width;
+            this.y = canvasSmoke.height + Math.random() * 50;
+            this.alpha = 0.1;
         }
     }
     draw() {
-        ctxParticles.fillStyle = `rgba(0, 255, 255, ${this.life / 200})`;
-        ctxParticles.beginPath();
-        ctxParticles.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctxParticles.fill();
+        ctxSmoke.fillStyle = `rgba(100, 100, 100, ${this.alpha})`;
+        ctxSmoke.beginPath();
+        ctxSmoke.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctxSmoke.fill();
     }
 }
 
-function initParticles() {
+const smokeArray = [];
+function initSmoke() {
     for (let i = 0; i < 50; i++) {
-        particlesArray.push(new Particle());
+        smokeArray.push(new Smoke());
     }
 }
 
-function animateParticles() {
-    ctxParticles.clearRect(0, 0, canvasParticles.width, canvasParticles.height);
-    for (let i = 0; i < particlesArray.length; i++) {
-        particlesArray[i].update();
-        particlesArray[i].draw();
+function animateSmoke() {
+    ctxSmoke.clearRect(0, 0, canvasSmoke.width, canvasSmoke.height);
+    for (let i = 0; i < smokeArray.length; i++) {
+        smokeArray[i].update();
+        smokeArray[i].draw();
     }
-    requestAnimationFrame(animateParticles);
+    requestAnimationFrame(animateSmoke);
 }
 
-initParticles();
-animateParticles();
+initSmoke();
+animateSmoke();
 
-// Эффект цифрового шума
+// Динамичный шум
 function drawNoise() {
-    ctxNoise.fillStyle = `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255})`;
+    ctxNoise.fillStyle = `rgb(${Math.random() * 50 + 205}, ${Math.random() * 50 + 205}, ${Math.random() * 50 + 205})`;
+    ctxNoise.fillRect(0, 0, canvasNoise.width, canvasNoise.height);
     for (let i = 0; i < 1000; i++) {
         const x = Math.random() * canvasNoise.width;
         const y = Math.random() * canvasNoise.height;
+        ctxNoise.fillStyle = `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.05)`;
         ctxNoise.fillRect(x, y, 1, 1);
     }
     requestAnimationFrame(drawNoise);
@@ -70,15 +72,15 @@ function drawNoise() {
 
 drawNoise();
 
-// Периодический глюк букв
+// Случайный глитч букв
 function glitchLetters() {
     const spans = nickname.querySelectorAll('span');
-    if (Math.random() < 0.1) { // Глюк каждые 10% кадров
+    if (Math.random() < 0.05) { // Глюк каждые 5% кадров
         spans.forEach(span => {
-            span.style.animation = 'glitch 0.5s';
+            span.style.animation = 'randomGlitch 0.3s';
             setTimeout(() => {
                 span.style.animation = '';
-            }, 500);
+            }, 300);
         });
     }
     requestAnimationFrame(glitchLetters);
@@ -93,16 +95,20 @@ document.addEventListener('mousemove', (e) => {
     const moveX = (e.clientX - centerX) / 50;
     const moveY = (e.clientY - centerY) / 50;
     nickname.style.transform = `translate(${moveX}px, ${moveY}px)`;
-    particlesArray.forEach(particle => {
-        particle.x += moveX * 0.1;
-        particle.y += moveY * 0.1;
-    });
+});
+
+// Проверка загрузки видео
+const video = document.getElementById('background-video');
+video.addEventListener('error', () => {
+    console.error('Не удалось загрузить видео. Используется резервный фон.');
+    const fallback = document.querySelector('.fallback-bg');
+    fallback.style.opacity = 1;
 });
 
 // Обновление размеров при изменении окна
 window.addEventListener('resize', () => {
-    canvasParticles.width = window.innerWidth;
-    canvasParticles.height = window.innerHeight;
+    canvasSmoke.width = window.innerWidth;
+    canvasSmoke.height = window.innerHeight;
     canvasNoise.width = window.innerWidth;
     canvasNoise.height = window.innerHeight;
     rect = nickname.getBoundingClientRect();

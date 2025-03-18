@@ -56,7 +56,7 @@ const drops = Array(Math.floor(columns)).fill(1);
 function drawMatrixRain() {
     ctxMatrix.fillStyle = "rgba(0, 0, 0, 0.05)";
     ctxMatrix.fillRect(0, 0, canvasMatrix.width, canvasMatrix.height);
-    ctxMatrix.fillStyle = "#0ff"; // Неоновый циан, как в стилистике сайта
+    ctxMatrix.fillStyle = "#0ff"; // Неоновый циан
     ctxMatrix.font = fontSize + "px monospace";
 
     for (let i = 0; i < drops.length; i++) {
@@ -157,6 +157,7 @@ nickname.addEventListener('click', (e) => {
 // Эффект перегрузки при частых кликах
 let clickCount = 0;
 let lastClickTime = 0;
+let alarmInterval;
 
 document.addEventListener('click', () => {
     const currentTime = Date.now();
@@ -168,13 +169,19 @@ document.addEventListener('click', () => {
     lastClickTime = currentTime;
 
     if (clickCount > 5) {
-        // Показываем красную полосу с текстом и эффектом мигания
+        // Вспышки на весь экран
+        document.body.style.animation = 'overload 0.5s infinite';
+
+        // Показываем полосу с эффектом alarm (появление и исчезновение)
         overloadMessage.textContent = 'System Overload!';
         overloadMessage.style.display = 'block';
+        overloadMessage.style.animation = 'alarm 1s infinite'; // Эффект alarm
 
-        // Убрали потряхивание объектов, оставили только мигание полосы
+        // Останавливаем эффект через 5 секунд
         setTimeout(() => {
+            document.body.style.animation = 'none';
             overloadMessage.style.display = 'none';
+            overloadMessage.style.animation = 'none';
             clickCount = 0;
         }, 5000);
     }

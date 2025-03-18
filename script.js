@@ -30,7 +30,6 @@ function hideLoadingScreen() {
 
 let isVideoLoaded = false;
 
-// Проверяем загрузку видео
 video.addEventListener('loadeddata', () => {
     console.log('Видео успешно загружено.');
     isVideoLoaded = true;
@@ -39,13 +38,11 @@ video.addEventListener('loadeddata', () => {
     }
 });
 
-// Проверяем полную загрузку страницы
 window.addEventListener('load', () => {
     console.log('Страница полностью загружена.');
     if (isVideoLoaded) {
         hideLoadingScreen();
     } else {
-        // Резервный таймер на 3 секунды
         setTimeout(hideLoadingScreen, 3000);
     }
 });
@@ -59,7 +56,7 @@ const drops = Array(Math.floor(columns)).fill(1);
 function drawMatrixRain() {
     ctxMatrix.fillStyle = "rgba(0, 0, 0, 0.05)";
     ctxMatrix.fillRect(0, 0, canvasMatrix.width, canvasMatrix.height);
-    ctxMatrix.fillStyle = "#0f0";
+    ctxMatrix.fillStyle = "#0ff"; // Изменили цвет на неоновый циан
     ctxMatrix.font = fontSize + "px monospace";
 
     for (let i = 0; i < drops.length; i++) {
@@ -171,27 +168,36 @@ document.addEventListener('click', () => {
     lastClickTime = currentTime;
 
     if (clickCount > 5) {
+        // Показываем красную полосу с текстом
         overloadMessage.textContent = 'System Overload!';
         overloadMessage.style.display = 'block';
-        document.body.style.animation = 'overload 0.5s infinite';
+
+        // Применяем потряхивание и глитч ко всем объектам
+        const elementsToShake = [
+            document.querySelector('.content'),
+            document.querySelector('#music-player'),
+            document.querySelector('#terminal'),
+            document.querySelector('.footer')
+        ];
+
+        elementsToShake.forEach(element => {
+            if (element) {
+                element.classList.add('overload-shake');
+            }
+        });
+
+        // Останавливаем эффект через 5 секунд
         setTimeout(() => {
             overloadMessage.style.display = 'none';
-            document.body.style.animation = 'none';
+            elementsToShake.forEach(element => {
+                if (element) {
+                    element.classList.remove('overload-shake');
+                }
+            });
             clickCount = 0;
         }, 5000);
     }
 });
-
-// Анимация перегрузки
-const style = document.createElement('style');
-style.innerHTML = `
-    @keyframes overload {
-        0% { filter: brightness(1); }
-        50% { filter: brightness(1.5); }
-        100% { filter: brightness(1); }
-    }
-`;
-document.head.appendChild(style);
 
 // Случайные артефакты
 function createGlitchArtifact() {
@@ -248,10 +254,8 @@ terminalInput.addEventListener('keypress', (e) => {
 
 // Музыкальный плеер
 const tracks = [
-    { url: "https://drive.google.com/uc?export=download&id=1Y9qzwlbip3UTgNysyRr7qCBXpAGdyFf1", name: "mindvacy - outer heaven.mp3" },
     { url: "/track2.mp3", name: "Sewerslvt - her.mp3" },
-    { url: "https://example.com/track3.mp3", name: "Wired Echo" }
-    // Замени на свои ссылки (например, https://drive.google.com/uc?export=download&id=ИД_ФАЙЛА)
+    // Добавь другие треки здесь, если есть
 ];
 
 let currentTrackIndex = 0;
@@ -261,16 +265,22 @@ function loadTrack(index) {
     currentTrackIndex = (index + tracks.length) % tracks.length;
     audio.src = tracks[currentTrackIndex].url;
     currentTrack.textContent = tracks[currentTrackIndex].name;
-    audio.play().catch(() => {
-        playPauseBtn.textContent = "▶ (Tap to start)";
-        playPauseBtn.onclick = () => audio.play();
-    });
+    audio.load();
+    playPause();
 }
 
 function playPause() {
     if (audio.paused) {
-        audio.play();
-        playPauseBtn.textContent = "❚❚";
+        audio.play().then(() => {
+            playPauseBtn.textContent = "❚❚";
+        }).catch((error) => {
+            console.error("Ошибка воспроизведения:", error);
+            playPauseBtn.textContent = "▶ (Tap to start)";
+            playPauseBtn.onclick = () => audio.play().then(() => {
+                playPauseBtn.textContent = "❚❚";
+                playPauseBtn.onclick = playPause;
+            }).catch(err => console.error(err));
+        });
     } else {
         audio.pause();
         playPauseBtn.textContent = "▶";
@@ -279,12 +289,10 @@ function playPause() {
 
 function prevTrack() {
     loadTrack(currentTrackIndex - 1);
-    playPause();
 }
 
 function nextTrack() {
     loadTrack(currentTrackIndex + 1);
-    playPause();
 }
 
 playPauseBtn.addEventListener('click', playPause);
@@ -299,7 +307,7 @@ video.addEventListener('error', () => {
     console.error('Не удалось загрузить видео. Используется резервный фон.');
     const fallback = document.querySelector('.fallback-bg');
     fallback.style.opacity = 1;
-    hideLoadingScreen(); // Скрываем экран при ошибке видео
+    hideLoadingScreen();
 });
 
 window.addEventListener('resize', () => {

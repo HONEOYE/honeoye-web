@@ -3,23 +3,62 @@ const ctxNoise = canvasNoise.getContext('2d');
 canvasNoise.width = window.innerWidth;
 canvasNoise.height = window.innerHeight;
 
+const canvasMatrix = document.getElementById('matrix-rain');
+const ctxMatrix = canvasMatrix.getContext('2d');
+canvasMatrix.width = window.innerWidth;
+canvasMatrix.height = window.innerHeight;
+
 const nickname = document.getElementById('nickname');
 const video = document.getElementById('background-video');
 const visitCount = document.getElementById('visit-count');
 const quoteText = document.getElementById('quote-text');
-const secretMessage = document.createElement('div');
-secretMessage.id = 'secret-message';
-document.body.appendChild(secretMessage);
-
+const secretMessage = document.getElementById('secret-message');
+const overloadMessage = document.getElementById('overload-message');
+const terminalOutput = document.getElementById('terminal-output');
+const terminalInput = document.getElementById('terminal-input');
+const loadingScreen = document.getElementById('loading-screen');
 let rect = nickname.getBoundingClientRect();
 
-// Инициализация счётчика посещений
+// Экран загрузки
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        loadingScreen.classList.add('hidden');
+    }, 3000); // Экран загрузки показывается 3 секунды
+});
+
+// Цифровой дождь (Matrix Rain)
+const matrixChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const fontSize = 14;
+const columns = canvasMatrix.width / fontSize;
+const drops = Array(Math.floor(columns)).fill(1);
+
+function drawMatrixRain() {
+    ctxMatrix.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctxMatrix.fillRect(0, 0, canvasMatrix.width, canvasMatrix.height);
+    ctxMatrix.fillStyle = "#0f0";
+    ctxMatrix.font = fontSize + "px monospace";
+
+    for (let i = 0; i < drops.length; i++) {
+        const char = matrixChars.charAt(Math.floor(Math.random() * matrixChars.length));
+        ctxMatrix.fillText(char, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvasMatrix.height && Math.random() > 0.975) {
+            drops[i] = 0;
+        }
+        drops[i]++;
+    }
+    requestAnimationFrame(drawMatrixRain);
+}
+
+drawMatrixRain();
+
+// Счётчик посещений
 let visits = localStorage.getItem('visitCount') ? parseInt(localStorage.getItem('visitCount')) : 0;
 visits++;
 localStorage.setItem('visitCount', visits);
 visitCount.textContent = visits;
 
-// Список цитат в стиле Лейн
+// Случайные цитаты
 const quotes = [
     "The Wired is alive...",
     "I am the ruler of this world...",
@@ -29,15 +68,14 @@ const quotes = [
 ];
 let currentQuoteIndex = 0;
 
-// Функция для смены цитат
 function updateQuote() {
     quoteText.textContent = quotes[currentQuoteIndex];
     currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
-    setTimeout(updateQuote, 10000); // Смена каждые 10 секунд
+    setTimeout(updateQuote, 10000);
 }
 updateQuote();
 
-// Оптимизация шума для мобильных
+// Шум
 function drawNoise() {
     console.log("Drawing noise...");
     const particleCount = window.innerWidth < 768 ? 500 : 2000;
@@ -54,6 +92,7 @@ function drawNoise() {
 
 drawNoise();
 
+// Глитч текста
 function glitchText() {
     console.log("Glitching text...");
     if (Math.random() < 0.05) {
@@ -69,6 +108,7 @@ function glitchText() {
 
 glitchText();
 
+// Глитч видео
 function glitchVideo() {
     console.log("Glitching video...");
     if (Math.random() < 0.1) {
@@ -89,7 +129,96 @@ nickname.addEventListener('click', (e) => {
         secretMessage.style.display = 'block';
         setTimeout(() => {
             secretMessage.style.display = 'none';
-        }, 3000); // Скрыть через 3 секунды
+        }, 3000);
+    }
+});
+
+// Эффект перегрузки при частых кликах
+let clickCount = 0;
+let lastClickTime = 0;
+
+document.addEventListener('click', () => {
+    const currentTime = Date.now();
+    if (currentTime - lastClickTime < 2000) {
+        clickCount++;
+    } else {
+        clickCount = 1;
+    }
+    lastClickTime = currentTime;
+
+    if (clickCount > 5) {
+        overloadMessage.textContent = 'System Overload!';
+        overloadMessage.style.display = 'block';
+        document.body.style.animation = 'overload 0.5s infinite';
+        setTimeout(() => {
+            overloadMessage.style.display = 'none';
+            document.body.style.animation = 'none';
+            clickCount = 0;
+        }, 5000);
+    }
+});
+
+// Анимация перегрузки
+const style = document.createElement('style');
+style.innerHTML = `
+    @keyframes overload {
+        0% { filter: brightness(1); }
+        50% { filter: brightness(1.5); }
+        100% { filter: brightness(1); }
+    }
+`;
+document.head.appendChild(style);
+
+// Случайные артефакты
+function createGlitchArtifact() {
+    const artifact = document.createElement('div');
+    artifact.classList.add('glitch-artifact');
+    const width = Math.random() * 50 + 20;
+    const height = Math.random() * 10 + 5;
+    artifact.style.width = `${width}px`;
+    artifact.style.height = `${height}px`;
+    artifact.style.left = `${Math.random() * window.innerWidth}px`;
+    artifact.style.top = `${Math.random() * window.innerHeight}px`;
+    document.body.appendChild(artifact);
+    setTimeout(() => {
+        artifact.remove();
+    }, 1000);
+}
+
+setInterval(createGlitchArtifact, 5000);
+
+// Терминал
+function addToTerminal(message) {
+    const line = document.createElement('div');
+    line.textContent = message;
+    terminalOutput.appendChild(line);
+    terminalOutput.scrollTop = terminalOutput.scrollHeight;
+}
+
+addToTerminal("Welcome to the Wired Terminal");
+addToTerminal("Type 'help' for commands");
+
+terminalInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        const command = terminalInput.value.trim().toLowerCase();
+        addToTerminal(`> ${command}`);
+        switch (command) {
+            case 'help':
+                addToTerminal("Commands: whoami, wired, clear");
+                break;
+            case 'whoami':
+                addToTerminal("HONEOYE");
+                break;
+            case 'wired':
+                addToTerminal("The Wired is watching you...");
+                break;
+            case 'clear':
+                terminalOutput.innerHTML = '';
+                break;
+            default:
+                addToTerminal("Unknown command. Type 'help' for commands.");
+        }
+        terminalInput.value = '';
     }
 });
 
@@ -106,5 +235,7 @@ video.addEventListener('loadeddata', () => {
 window.addEventListener('resize', () => {
     canvasNoise.width = window.innerWidth;
     canvasNoise.height = window.innerHeight;
+    canvasMatrix.width = window.innerWidth;
+    canvasMatrix.height = window.innerHeight;
     rect = nickname.getBoundingClientRect();
 });

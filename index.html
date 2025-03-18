@@ -8,6 +8,17 @@
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Экран загрузки -->
+    <div id="loading-screen">
+        <div class="loading-text">Connecting to the Wired...</div>
+    </div>
+
+    <!-- Слой для цифрового дождя -->
+    <canvas id="matrix-rain"></canvas>
+
+    <!-- Слой для сканирующей линии -->
+    <div id="scanline"></div>
+
     <div class="video-background" id="video-background">
         <video autoplay muted loop id="background-video" playsinline crossorigin="anonymous">
             <source src="https://drive.google.com/uc?export=download&id=1Xp83oebR4C4x2Ly3Cy2zqOKVBVY3g78l" type="video/mp4">
@@ -15,6 +26,7 @@
         </video>
         <div class="fallback-bg"></div>
     </div>
+
     <div class="content">
         <h1 class="nickname" id="nickname">HONEOYE</h1>
         <div class="steam-btn-wrapper">
@@ -26,11 +38,27 @@
             </a>
         </div>
     </div>
+
+    <!-- Слой для шума -->
     <canvas id="noise"></canvas>
-    <div class="footer">
-        <div id="visit-counter">Посещений: <span id="visit-count">0</span></div>
-        <div id="quote">•<span id="quote-text"></span></div>
+
+    <!-- Терминал -->
+    <div id="terminal">
+        <div id="terminal-output"></div>
+        <div class="terminal-input-wrapper">
+            <span class="prompt">></span>
+            <input type="text" id="terminal-input" placeholder="Type command...">
+        </div>
     </div>
+
+    <!-- Футер с счётчиком и цитатами -->
+    <div class="footer">
+        <div id="visit-counter">re-entries: <span id="visit-count">0</span></div>
+        <div id="quote"><span id="quote-text"></span></div>
+    </div>
+
+    <div id="secret-message"></div>
+    <div id="overload-message"></div>
     <script src="script.js"></script>
 </body>
 </html>

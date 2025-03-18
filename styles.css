@@ -43,77 +43,43 @@ body, html {
     height: 100%;
 }
 
-.nickname-wrapper {
-    position: relative;
-}
-
 .nickname {
     font-size: 4em;
     color: #fff;
     display: flex;
     text-transform: uppercase;
+    position: relative;
     transition: transform 0.1s ease;
-    margin: 0;
 }
 
 .nickname span {
-    opacity: 0;
+    opacity: 1;
     text-shadow: 0 0 15px #0ff, 0 0 25px #0ff;
-    animation: glitch 2s ease-in-out forwards, glitchPeriodic 3s infinite 5s;
+    animation: initialGlitch 2s ease-in-out forwards;
 }
 
-.nickname span:nth-child(1) { animation-delay: 0.2s, 5s; }
-.nickname span:nth-child(2) { animation-delay: 0.4s, 5.1s; }
-.nickname span:nth-child(3) { animation-delay: 0.6s, 5.2s; }
-.nickname span:nth-child(4) { animation-delay: 0.8s, 5.3s; }
-.nickname span:nth-child(5) { animation-delay: 1.0s, 5.4s; }
-.nickname span:nth-child(6) { animation-delay: 1.2s, 5.5s; }
-.nickname span:nth-child(7) { animation-delay: 1.4s, 5.6s; }
+.nickname span:nth-child(1) { animation-delay: 0.2s; }
+.nickname span:nth-child(2) { animation-delay: 0.4s; }
+.nickname span:nth-child(3) { animation-delay: 0.6s; }
+.nickname span:nth-child(4) { animation-delay: 0.8s; }
+.nickname span:nth-child(5) { animation-delay: 1.0s; }
+.nickname span:nth-child(6) { animation-delay: 1.2s; }
+.nickname span:nth-child(7) { animation-delay: 1.4s; }
 
-@keyframes glitch {
+@keyframes initialGlitch {
     0% { opacity: 0; transform: translateY(50px) skew(10deg); }
     20% { opacity: 1; transform: translateY(-10px) skew(-10deg); }
     22% { opacity: 0.5; transform: translateY(5px) skew(5deg); }
     24% { opacity: 1; transform: translateY(-5px) skew(-5deg); }
-    100% { opacity: 1; transform: translateY(0) skew(0); text-shadow: 0 0 30px #0ff, 0 0 50px #0ff; }
+    100% { opacity: 1; transform: translateY(0) skew(0); }
 }
 
-@keyframes glitchPeriodic {
-    0% { transform: translate(0) skew(0); opacity: 1; }
-    10% { transform: translate(-5px, 5px) skew(5deg); opacity: 0.7; }
-    12% { transform: translate(5px, -5px) skew(-5deg); opacity: 0.5; }
-    14% { transform: translate(-3px, 3px) skew(3deg); opacity: 0.8; }
-    16% { transform: translate(0) skew(0); opacity: 1; }
-    100% { transform: translate(0) skew(0); opacity: 1; }
-}
-
-.noise-canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 2;
-    mix-blend-mode: screen;
-    opacity: 0.3;
-}
-
-body[data-theme="cyan"] .nickname span {
-    text-shadow: 0 0 30px #0ff, 0 0 50px #0ff;
-}
-
-body[data-theme="purple"] .nickname span {
-    text-shadow: 0 0 30px #f0f, 0 0 50px #f0f;
-}
-
-body[data-theme="cyan"] .steam-btn {
-    background: linear-gradient(135deg, #1b263b, #415a77);
-    box-shadow: 0 0 20px #415a77;
-}
-
-body[data-theme="purple"] .steam-btn {
-    background: linear-gradient(135deg, #2b1b3b, #7741a7);
-    box-shadow: 0 0 20px #7741a7;
+@keyframes glitch {
+    0%, 100% { transform: translate(0); }
+    10% { transform: translate(-5px, 5px) skew(5deg); }
+    20% { transform: translate(5px, -5px) skew(-5deg); }
+    30% { transform: translate(-3px, 3px) skew(3deg); }
+    40% { transform: translate(3px, -3px) skew(-3deg); }
 }
 
 .steam-btn-wrapper {
@@ -125,11 +91,13 @@ body[data-theme="purple"] .steam-btn {
     padding: 15px 30px;
     font-size: 1.8em;
     color: #fff;
+    background: linear-gradient(135deg, #1b263b, #415a77);
     border-radius: 50px;
     text-decoration: none;
     display: flex;
     align-items: center;
     gap: 15px;
+    box-shadow: 0 0 20px #415a77;
     transition: all 0.3s ease;
     position: relative;
     z-index: 1;
@@ -137,6 +105,7 @@ body[data-theme="purple"] .steam-btn {
 
 .steam-btn:hover {
     transform: scale(1.1);
+    box-shadow: 0 0 30px #66ccff, 0 0 50px #66ccff;
 }
 
 .steam-btn::before {
@@ -162,20 +131,15 @@ body[data-theme="purple"] .steam-btn {
     fill: #fff;
 }
 
-.theme-toggle {
-    margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 1em;
-    color: #fff;
-    background: #333;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-.theme-toggle:hover {
-    background: #555;
+#noise {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0.1;
 }
 
 #particles {
@@ -184,5 +148,5 @@ body[data-theme="purple"] .steam-btn {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 0;
+    z-index: 1;
 }

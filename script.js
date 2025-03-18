@@ -8,6 +8,11 @@ const ctxMatrix = canvasMatrix.getContext('2d');
 canvasMatrix.width = window.innerWidth;
 canvasMatrix.height = window.innerHeight;
 
+const canvasWires = document.getElementById('wires');
+const ctxWires = canvasWires.getContext('2d');
+canvasWires.width = window.innerWidth;
+canvasWires.height = window.innerHeight;
+
 const nickname = document.getElementById('nickname');
 const video = document.getElementById('background-video');
 const visitCount = document.getElementById('visit-count');
@@ -23,6 +28,9 @@ const nextTrackBtn = document.getElementById('next-track');
 const currentTrack = document.getElementById('current-track');
 const signalHijack = document.getElementById('signal-hijack');
 const notifications = document.getElementById('notifications');
+const musicPlayer = document.getElementById('music-player');
+const terminal = document.getElementById('terminal');
+const steamBtn = document.querySelector('.steam-btn');
 let rect = nickname.getBoundingClientRect();
 
 // Экран загрузки с эффектом "переключения каналов"
@@ -36,7 +44,7 @@ video.addEventListener('loadeddata', () => {
     console.log('Видео успешно загружено.');
     isVideoLoaded = true;
     if (document.readyState === 'complete') {
-        setTimeout(hideLoadingScreen, 2000); // Задержка для эффекта "канала"
+        setTimeout(hideLoadingScreen, 2000);
     }
 });
 
@@ -50,7 +58,7 @@ window.addEventListener('load', () => {
 });
 
 // Цифровой дождь (Matrix Rain)
-const matrixChars = "❤1337HONEOYE!@#</3";
+const matrixChars = "❤1337HONEOYE</3";
 const fontSize = 14;
 const columns = canvasMatrix.width / fontSize;
 const drops = Array(Math.floor(columns)).fill(1);
@@ -100,7 +108,6 @@ updateQuote();
 
 // Шум
 function drawNoise() {
-    console.log("Drawing noise...");
     const particleCount = window.innerWidth < 768 ? 500 : 2000;
     ctxNoise.fillStyle = `rgba(0, 0, 0, 0.9)`;
     ctxNoise.fillRect(0, 0, canvasNoise.width, canvasNoise.height);
@@ -117,7 +124,6 @@ drawNoise();
 
 // Глитч текста
 function glitchText() {
-    console.log("Glitching text...");
     if (Math.random() < 0.05) {
         const offset = Math.random() * 10 - 5;
         nickname.style.transform = `translate(${offset}px, ${Math.random() * 5 - 2.5}px)`;
@@ -133,7 +139,6 @@ glitchText();
 
 // Глитч видео
 function glitchVideo() {
-    console.log("Glitching video...");
     if (Math.random() < 0.1) {
         const offset = Math.random() * 10 - 5;
         video.style.transform = `translate(${offset}px, ${Math.random() * 5 - 2.5}px)`;
@@ -237,9 +242,125 @@ function showNotification() {
 
 setInterval(showNotification, Math.random() * 10000 + 10000);
 
+// Случайные системные сбои
+function systemGlitch() {
+    if (Math.random() < 0.05) { // 5% вероятность
+        // Приостанавливаем анимации
+        document.body.style.animationPlayState = 'paused';
+        canvasNoise.classList.add('glitch');
+        nickname.classList.add('rgb-glitch');
+
+        // Эффект "зависания" длится 1 секунду
+        setTimeout(() => {
+            document.body.style.animationPlayState = 'running';
+            canvasNoise.classList.remove('glitch');
+            nickname.classList.remove('rgb-glitch');
+            addToTerminal("System stabilized.");
+        }, 1000);
+    }
+    // Проверяем каждые 30-60 секунд
+    setTimeout(systemGlitch, Math.random() * 30000 + 30000);
+}
+
+setTimeout(systemGlitch, 30000); // Первая проверка через 30 секунд
+
+// Интерактивные провода
+let mouseX = 0;
+let mouseY = 0;
+const targets = [
+    { element: musicPlayer, x: 0, y: 0 },
+    { element: terminal, x: 0, y: 0 },
+    { element: steamBtn, x: 0, y: 0 }
+];
+
+// Обновляем координаты целей
+function updateTargetPositions() {
+    targets.forEach(target => {
+        const rect = target.element.getBoundingClientRect();
+        target.x = rect.left + rect.width / 2;
+        target.y = rect.top + rect.height / 2;
+    });
+}
+
+updateTargetPositions();
+
+// Хранилище линий и частиц
+const wires = [];
+const particles = [];
+
+document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+
+    // Создаём линии к целям
+    targets.forEach(target => {
+        wires.push({
+            startX: mouseX,
+            startY: mouseY,
+            endX: target.x,
+            endY: target.y,
+            opacity: 1,
+            lifetime: 2000 // 2 секунды
+        });
+
+        // Создаём частицы, движущиеся по линии
+        for (let i = 0; i < 3; i++) {
+            particles.push({
+                x: mouseX,
+                y: mouseY,
+                targetX: target.x,
+                targetY: target.y,
+                progress: 0,
+                speed: 0.02 + Math.random() * 0.03
+            });
+        }
+    });
+});
+
+function drawWires() {
+    ctxWires.clearRect(0, 0, canvasWires.width, canvasWires.height);
+
+    // Рисуем линии
+    wires.forEach((wire, index) => {
+        wire.opacity -= 1 / (wire.lifetime / 1000 * 60); // Уменьшаем прозрачность
+        if (wire.opacity <= 0) {
+            wires.splice(index, 1);
+            return;
+        }
+
+        ctxWires.beginPath();
+        ctxWires.moveTo(wire.startX, wire.startY);
+        ctxWires.lineTo(wire.endX, wire.endY);
+        ctxWires.strokeStyle = `rgba(0, 255, 255, ${wire.opacity})`;
+        ctxWires.lineWidth = 1;
+        ctxWires.stroke();
+    });
+
+    // Рисуем и обновляем частицы
+    particles.forEach((particle, index) => {
+        particle.progress += particle.speed;
+        if (particle.progress >= 1) {
+            particles.splice(index, 1);
+            return;
+        }
+
+        particle.x = particle.x + (particle.targetX - particle.x) * particle.progress;
+        particle.y = particle.y + (particle.targetY - particle.y) * particle.progress;
+
+        ctxWires.beginPath();
+        ctxWires.arc(particle.x, particle.y, 2, 0, Math.PI * 2);
+        ctxWires.fillStyle = `rgba(0, 255, 255, ${1 - particle.progress})`;
+        ctxWires.fill();
+    });
+
+    requestAnimationFrame(drawWires);
+}
+
+drawWires();
+
 // Терминал и мини-игра "взлома"
 let gameActive = false;
-let secretCode = Math.floor(Math.random() * 1000); // Код от 0 до 999
+let secretCode = Math.floor(Math.random() * 1000);
 
 function addToTerminal(message) {
     const line = document.createElement('div');
@@ -263,7 +384,7 @@ terminalInput.addEventListener('keypress', (e) => {
             } else if (guess === secretCode) {
                 addToTerminal("Access granted! Website hacked!");
                 gameActive = false;
-                secretCode = Math.floor(Math.random() * 1000); // Новый код
+                secretCode = Math.floor(Math.random() * 1000);
             } else if (guess < secretCode) {
                 addToTerminal("Too low. Try again.");
             } else {
@@ -304,7 +425,7 @@ terminalInput.addEventListener('keypress', (e) => {
 
 // Музыкальный плеер
 const tracks = [
-    { url: "/track2.mp3", name: "Sewerslvt - her.mp3" },
+    { url: "/track2.mp3", name: "Cyber Track" },
 ];
 
 let currentTrackIndex = 0;
@@ -364,5 +485,8 @@ window.addEventListener('resize', () => {
     canvasNoise.height = window.innerHeight;
     canvasMatrix.width = window.innerWidth;
     canvasMatrix.height = window.innerHeight;
+    canvasWires.width = window.innerWidth;
+    canvasWires.height = window.innerHeight;
     rect = nickname.getBoundingClientRect();
+    updateTargetPositions();
 });

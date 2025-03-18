@@ -21,13 +21,33 @@ const playPauseBtn = document.getElementById('play-pause');
 const prevTrackBtn = document.getElementById('prev-track');
 const nextTrackBtn = document.getElementById('next-track');
 const currentTrack = document.getElementById('current-track');
-let rect = nickname.getContext('2d');
+let rect = nickname.getBoundingClientRect();
 
 // Экран загрузки
+function hideLoadingScreen() {
+    loadingScreen.classList.add('hidden');
+}
+
+let isVideoLoaded = false;
+
+// Проверяем загрузку видео
+video.addEventListener('loadeddata', () => {
+    console.log('Видео успешно загружено.');
+    isVideoLoaded = true;
+    if (document.readyState === 'complete') {
+        hideLoadingScreen();
+    }
+});
+
+// Проверяем полную загрузку страницы
 window.addEventListener('load', () => {
-    setTimeout(() => {
-        loadingScreen.classList.add('hidden');
-    }, 3000);
+    console.log('Страница полностью загружена.');
+    if (isVideoLoaded) {
+        hideLoadingScreen();
+    } else {
+        // Резервный таймер на 5 секунд
+        setTimeout(hideLoadingScreen, 5000);
+    }
 });
 
 // Цифровой дождь (Matrix Rain)
@@ -231,7 +251,7 @@ const tracks = [
     { url: "https://example.com/track1.mp3", name: "Cyber Pulse" },
     { url: "https://example.com/track2.mp3", name: "Neon Drift" },
     { url: "https://example.com/track3.mp3", name: "Wired Echo" }
-    // Замени на свои ссылки (например, Google Drive: https://drive.google.com/uc?export=download&id=ИД_ФАЙЛА)
+    // Замени на свои ссылки (например, https://drive.google.com/uc?export=download&id=ИД_ФАЙЛА)
 ];
 
 let currentTrackIndex = 0;
@@ -279,10 +299,7 @@ video.addEventListener('error', () => {
     console.error('Не удалось загрузить видео. Используется резервный фон.');
     const fallback = document.querySelector('.fallback-bg');
     fallback.style.opacity = 1;
-});
-
-video.addEventListener('loadeddata', () => {
-    console.log('Видео успешно загружено.');
+    hideLoadingScreen(); // Скрываем экран при ошибке видео
 });
 
 window.addEventListener('resize', () => {

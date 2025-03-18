@@ -16,6 +16,7 @@ body, html {
     height: 100%;
     background: #000;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     z-index: 999;
@@ -29,6 +30,15 @@ body, html {
     font-size: 2em;
     text-shadow: 0 0 10px #0ff;
     animation: flicker 1s infinite;
+}
+
+.loading-log {
+    color: #0ff;
+    font-size: 0.8em;
+    text-shadow: 0 0 5px #0ff;
+    margin-top: 10px;
+    white-space: pre-wrap;
+    animation: flicker 1.5s infinite;
 }
 
 #loading-screen.hidden {
